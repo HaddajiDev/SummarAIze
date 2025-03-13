@@ -19,6 +19,8 @@ app.use(session({
 
 
 const ChatRoutes = require("./routes/upload");
+app.use("/resources",require("./routes/resources"));
+app.use("/quiz",require("./routes/quizGenRoute"));
 const PORT = process.env.PORT;
 (async () => {
   try {

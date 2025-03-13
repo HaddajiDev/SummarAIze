@@ -10,31 +10,18 @@ const openrouter = new OpenAI({
 
 router.post('/', async (req, res) => {
   try {
-    const { text,nbq, model = 'meta-llama/llama-3.3-70b-instruct:free' } = req.body;
+    const { text } = req.body;
 
     if (!text) {
       return res.status(400).json({ error: 'Text parameter is required' });
     }
 
     const prompt = `
-      Generate a quiz based on the following text. Follow these requirements:
-      - Create ${nbq} multiple-choice questions
-      - Each question should have 4 options
-      - Indicate the correct answer with an index (0-3)
-      - Format the response as a valid JSON array only
-      - No additional text or explanation
-      - Use this structure:
-        [{
-          "question": "question text",
-          "options": ["option1", "option2", "option3", "option4"],
-          "answer": correct_option_index
-        }]
-
-      Text: ${text}
+      You are a resource generator AI that provides helpful links for these topics ${text} . For each query, search for relevant resources, such as articles, tutorials, and documentation, and provide them in the following format: {\"link\": \"[URL]\"}. The output should only contain links and no additional explanations.
     `;
 
     const response = await openrouter.chat.completions.create({
-      model: model,
+      model: "google/gemini-2.0-flash-lite-preview-02-05:free",
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.7,
       response_format: { type: "json_object" }
