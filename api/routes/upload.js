@@ -4,43 +4,65 @@ const { OpenAI } = require('openai');
 const { ObjectId } = require('mongodb');
 const multer = require('multer');
 const pdf = require('pdf-parse');
-const Tesseract = require('tesseract.js');
-const { createCanvas } = require('canvas');
+const pdfjs = require('pdfjs-dist');
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const upload = multer({
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'application/pdf') {
+            cb(null, true);
+        } else {
+            cb(new Error('Only PDF files are allowed'), false);
+        }
+    }
+});
 
 const openai = new OpenAI({
     baseURL: process.env.BASE_URL,
     apiKey: process.env.OPENROUTER_API_KEY
 });
 
+
 module.exports = (db, bucket) => {
 
     router.post('/upload', upload.single('file'), async (req, res) => {
-        
         try {
-            if (!req.file) return res.status(400).send("No file uploaded");
-            
-            const text = await processPDF(req.file.buffer);
+            if (!req.file) return res.status(400).json({ 
+                success: false, 
+                error: 'No PDF file uploaded' 
+            });
+
+            const isValidPdf = await validatePDF(req.file.buffer);
+            if (!isValidPdf) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Invalid PDF file structure'
+                });
+            }
+
+            const text = await extractPDFText(req.file.buffer);
             
             const uploadStream = bucket.openUploadStream(req.file.originalname);
-            uploadStream.end(req.file.buffer);
             
-            const summary = await processPdfData(text, req);
+            uploadStream.end(req.file.buffer);
+
+            const summary = await generateSummary(text, req);
             
             res.status(200).json({
-                id: uploadStream.id,
-                summary,
-                filename: req.file.originalname
+                summary, 
             });
 
         } catch (error) {
             console.error('Upload error:', error);
-            res.status(500).send(error.message);
+            res.status(500).json({
+                success: false,
+                error: error.message
+            });
         }
-
     });
+
 
     router.get('/inspect/:id', async (req, res) => {
         try {
@@ -82,51 +104,27 @@ module.exports = (db, bucket) => {
     return router;
 };
 
-
-async function processPDF(buffer) {
+async function validatePDF(buffer) {
     try {
-        const data = await pdf(buffer);
-        let text = data.text;
-
-        if (text.length < 500) {
-            text += await runOCR(buffer);
-        }
-        
-        return text;
+        const doc = await pdfjs.getDocument(buffer).promise;
+        return !!doc.numPages;
     } catch (error) {
-        throw new Error(`PDF processing failed: ${error.message}`);
+        return false;
     }
 }
 
-async function runOCR(buffer) {
-    const canvas = createCanvas(1000, 1000);
-    const ctx = canvas.getContext('2d');
-    
-    const image = await convertPDFToImage(buffer, ctx);
-    const { data: { text } } = await Tesseract.recognize(image);
-    return text;
-}
-
-async function convertPDFToImage(buffer, ctx) {
-    const pdf = require('pdfjs-dist');
-    const doc = await pdf.getDocument(buffer).promise;
-    const page = await doc.getPage(1);
-    const viewport = page.getViewport({ scale: 1.5 });
-    
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-    
-    await page.render({
-        canvasContext: ctx,
-        viewport: viewport
-    }).promise;
-    
-    return canvas.toBuffer();
-}
-
-
-async function processPdfData(text, req) {
+async function extractPDFText(buffer) {
     try {
+        const data = await pdf(buffer);
+        return data.text;
+    } catch (error) {
+        throw new Error(`PDF text extraction failed: ${error.message}`);
+    }
+}
+
+async function generateSummary(text, req) {
+    try {
+
         if (!req.session.chatHistory) {
             req.session.chatHistory = [];
         }
@@ -138,17 +136,14 @@ async function processPdfData(text, req) {
 
         const userMessage = {
             role: "user",
-            content: [{
-                type: "text",
-                text: `Document Content:\n${text}\n\nPlease analyze this document and provide a comprehensive summary.`
-            }]
+            content: `PDF Content:\n${text}`
         };
 
         messages.push(userMessage);
 
         const completion = await openai.chat.completions.create({
             model: "google/gemini-2.0-flash-lite-preview-02-05:free",
-            messages: messages
+            messages,
         });
 
         const aiResponse = completion.choices[0].message.content;
@@ -162,7 +157,6 @@ async function processPdfData(text, req) {
         return aiResponse;
 
     } catch (error) {
-        console.error('Error processing PDF data:', error);
-        throw error;
+        console.error(error);
     }
 }
