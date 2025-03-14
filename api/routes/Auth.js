@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/UserModel.js');
-const transporter = require('../config/nodemailer.js');
+const transporter = require('../Nodemailer.js');
 
 const router = express.Router();
 
