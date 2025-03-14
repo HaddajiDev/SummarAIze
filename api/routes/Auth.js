@@ -116,5 +116,50 @@ router.post('/register', async (req, res) => {
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 });
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ success: false, message: 'Missing Details' });
+    }
+
+    try {
+        const user = await userModel.findOne({ email }).exec();
+        if (!user) {
+            return res.status(400).json({ success: false, message: "User not found" });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ success: false, message: "Incorrect password" });
+        }
+
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== 'development', 
+            sameSite: process.env.NODE_ENV === 'development' ? 'none' : 'strict',  
+            maxAge: 7 * 24 * 60 * 60 * 1000 
+        });
+
+        return res.json({ success: true, message: 'Login successful' });
+    } catch (error) {
+        console.error("❌ Error:", error);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+});
+router.post('/logout', async (req, res) => {
+    try {
+        res.clearCookie('token', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+        });
+        return res.json({ success: true, message: "Logged out successfully" });
+    } catch (error) {
+        return res.json({ success: false, message: error.message });
+    }
+});
+
 
 module.exports = router;
