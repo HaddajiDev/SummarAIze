@@ -5,7 +5,6 @@ const userModel = require('../models/UserModel');
 const transporter = require('../Nodemailer');
 
 const router = express.Router();
-
 router.post('/register', async (req, res) => {
     const { name, email, password } = req.body;
 
@@ -160,79 +159,7 @@ router.post('/logout', async (req, res) => {
         return res.json({ success: false, message: error.message });
     }
 });
-router.post('/send-verify-otp', async (req, res) => {
-    try {
-        const { userId } = req.body;
-        const user = await userModel.findById(userId);
-        if (user.isAccountVerified) {
-            return res.json({ success: false, message: "Account already verified" });
-        }
 
-        const otp = String(Math.floor(100000 + Math.random() * 900000));
-        user.verifyOtp = otp;
-        user.verifyOtpExpireAt = Date.now() + 24 * 60 * 60 * 1000; // OTP expiry time: 24 hours
-        await user.save();
-
-        const mailOptions = {
-            from: process.env.SENDER_EMAIL,
-            to: user.email,
-            subject: 'Account Verification',
-            html: `
-                <p>Your OTP for account verification is: <strong>${otp}</strong></p>
-                <p>This OTP is valid for 24 hours.</p>
-            `,
-        };
-
-        await transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                return res.json({ success: false, message: error.message });
-            }
-            return res.json({ success: true, message: "OTP sent successfully" });
-        });
-
-    } catch (error) {
-        return res.json({ success: false, message: error.message });
-    }
-});
-router.post('/send-reset-otp', async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.json({ success: false, message: "Email is required" });
-    }
-
-    try {
-        const user = await userModel.findOne({ email });
-        if (!user) {
-            return res.json({ success: false, message: "User not found" });
-        }
-
-        const otp = String(Math.floor(100000 + Math.random() * 900000));
-        user.resetOtp = otp;
-        user.resetOtpExpireAt = Date.now() + 30 * 60 * 1000; 
-        await user.save();
-
-        const mailOptions = {
-            from: process.env.SENDER_EMAIL,
-            to: user.email,
-            subject: 'Password Reset',
-            html: `
-                <p>Your OTP for password reset is: <strong>${otp}</strong></p>
-                <p>This OTP is valid for 30 minutes.</p>
-            `,
-        };
-
-        await transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                return res.json({ success: false, message: error.message });
-            }
-            return res.json({ success: true, message: "OTP sent to your email" });
-        });
-
-    } catch (error) {
-        return res.json({ success: false, message: error.message });
-    }
-});
 router.post('/reset-password', async (req, res) => {
     const { email, otp, newPassword } = req.body;
 
