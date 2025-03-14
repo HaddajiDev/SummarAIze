@@ -1,30 +1,26 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const userModel = require('../models/UserModel.js');
-const transporter = require('../Nodemailer.js');
+const userModel = require('../models/UserModel');
+const transporter = require('../Nodemailer');
 
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password ) {
+    if (!name || !email || !password) {
         return res.status(400).json({ success: false, message: 'Missing Details' });
     }
 
     try {
-        const existingUser = await userModel.findOne({ email });
+        const existingUser = await userModel.findOne({ email }).exec();
         if (existingUser) {
             return res.status(400).json({ success: false, message: "User already exists" });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new userModel({
-            name,
-            email,
-            password: hashedPassword,
-        });
+        const user = new userModel({ name, email, password: hashedPassword });
 
         await user.save();
 
@@ -34,7 +30,7 @@ router.post('/register', async (req, res) => {
             httpOnly: true,
             secure: process.env.NODE_ENV !== 'development',
             sameSite: process.env.NODE_ENV === 'development' ? 'none' : 'strict',
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 jours
+            maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
         const mailoptions = {
@@ -66,7 +62,7 @@ router.post('/register', async (req, res) => {
                             margin-bottom: 30px;
                         }
                         .header h1 {
-                            color:rgb(0, 41, 174);
+                            color: rgb(0, 41, 174);
                             font-size: 2.5em;
                         }
                         .content {
@@ -75,9 +71,6 @@ router.post('/register', async (req, res) => {
                             line-height: 1.6;
                             color: #555;
                         }
-                        .content p {
-                            margin-bottom: 20px;
-                        }
                         .footer {
                             text-align: center;
                             margin-top: 30px;
@@ -85,7 +78,7 @@ router.post('/register', async (req, res) => {
                             color: #888;
                         }
                         .footer a {
-                            color:rgb(0, 41, 174);
+                            color: rgb(0, 41, 174);
                             text-decoration: none;
                         }
                     </style>
@@ -105,8 +98,7 @@ router.post('/register', async (req, res) => {
                         </div>
                     </div>
                 </body>
-                </html>
-            `
+                </html>`
         };
 
         transporter.sendMail(mailoptions, (error, info) => {
@@ -114,15 +106,15 @@ router.post('/register', async (req, res) => {
                 console.log('Error sending email:', error);
                 return res.status(500).json({ success: false, message: error.message });
             } else {
-                console.log('Email sent: ' + info.response);
+                console.log('Email sent:', info.response);
                 return res.json({ success: true, message: 'Registration successful' });
             }
         });
 
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        console.error("❌ Error:", error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 });
-
 
 module.exports = router;

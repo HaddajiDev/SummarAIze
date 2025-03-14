@@ -1,5 +1,4 @@
 require('dotenv').config()
-
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
@@ -22,6 +21,8 @@ const ChatRoutes = require("./routes/upload");
 app.use("/resources",require("./routes/resources"));
 app.use("/quiz",require("./routes/quizGenRoute"));
 app.use("/auth", require("./routes/Auth"));
+
+
 const PORT = process.env.PORT;
 (async () => {
   try {
