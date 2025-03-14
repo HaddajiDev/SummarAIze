@@ -3,7 +3,9 @@ require('dotenv').config()
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
+const { GridFSBucket } = require('mongodb');
 const app = express()
+const connect = require('./db_connect');
 
 app.use(cors());
 
@@ -15,9 +17,27 @@ app.use(session({
   saveUninitialized: true
 }));
 
-app.use("/course", require("./routes/Generate_Course"))
 
+const ChatRoutes = require("./routes/upload");
+app.use("/resources",require("./routes/resources"));
+app.use("/quiz",require("./routes/quizGenRoute"));
 const PORT = process.env.PORT;
-app.listen(PORT, (err) => {
-    err ? console.log(err) : console.log(`Running on ${PORT}`)
-})
+(async () => {
+  try {
+      const db = await connect();
+      const bucket = new GridFSBucket(db, {
+          bucketName: 'uploads'
+      });
+
+
+      app.use('/api', ChatRoutes(db, bucket));      
+
+      app.get("/", (req, res) => res.send("Working"));
+
+      app.listen(PORT, () => {
+          console.log(`server running on ${PORT}`);
+      });
+  } catch (error) {
+      console.error('Error connecting to db:', error);
+  }
+})();
