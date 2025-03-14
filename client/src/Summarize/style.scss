@@ -1,0 +1,101 @@
+#summarize{
+    height: 100%;
+    border-radius: 4px 0 0 4px;
+    border: 2px solid #7065ef;
+    position: relative;
+    .title{
+        margin: 0;
+        padding: 15px;
+        font-size: 16px;
+        text-align: center;
+        background: #7065ef;
+        text-transform: capitalize;
+        border-bottom: 1px solid #EEE;
+        color: #FFF;
+        svg{
+            position: relative;
+            top: 3px;
+            font-size: 18px;
+        }
+    }
+    .sumContent{
+        padding: 10px;
+        height: calc(100% - 70px);
+        overflow-y: auto;
+        &::-webkit-scrollbar {
+            width: 5px;
+        }
+        &::-webkit-scrollbar-track {
+            background: #ffffff3a;
+        }
+        &::-webkit-scrollbar-thumb {
+            background-color: #7165efea;
+            border-radius: 15px;
+        }
+        // Headings
+        h1, h2, h3, h4, h5, h6 {
+            color: #0d133a;
+            font-weight: bold;
+            font-size: 21px;
+            margin-bottom: 9px;
+        }
+
+        // Paragraphs
+        p {
+            margin-bottom: 5px;
+        }
+
+        // Lists
+        ul, ol {
+            padding-left: 20px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            li {
+                margin-bottom: 5px;
+            }
+        }
+
+        // Bold Text
+        strong {
+            color: #7165ef;
+        }
+
+        // Links
+        a {
+            color: #7165ef;
+            text-decoration: none;
+            font-weight: bold;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+
+        // Blockquote
+        blockquote {
+            border-left: 4px solid #7165ef;
+            padding-left: 15px;
+            margin: 10px 0;
+            color: #555;
+            font-style: italic;
+        }
+
+        // Code Blocks
+        pre {
+            background-color: #272822;
+            color: #f8f8f2;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: "Courier New", monospace;
+        }
+
+        code {
+            background-color: #ecf0f1;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: "Courier New", monospace;
+            color: #c0392b;
+        }
+    }
+}

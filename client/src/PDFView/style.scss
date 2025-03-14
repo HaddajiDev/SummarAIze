@@ -1,0 +1,11 @@
+#pdf-view{
+    width: calc(100% - 421px);
+    height: 90vh;
+    padding: 43px 0;
+    .content{
+        height: 100%;
+        box-shadow: 0 0 5px 4px #7065ef33;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+}
