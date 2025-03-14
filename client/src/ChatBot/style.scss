@@ -1,0 +1,109 @@
+#chatbot{
+    height: 100%;
+    border-radius: 4px 0 0 4px;
+    border: 2px solid #7065ef;
+    position: relative;
+    h1{
+        margin: 0;
+        padding: 15px;
+        font-size: 16px;
+        text-align: center;
+        background: #7065ef;
+        text-transform: capitalize;
+        border-bottom: 1px solid #EEE;
+        color: #FFF;
+        svg{
+            position: relative;
+            top: 1px;
+            font-size: 18px;
+        }
+    }
+    .chatContent{
+        padding: 15px 0 0;
+        height: calc(100% - 145px);
+        overflow-y: auto;
+        &::-webkit-scrollbar {
+            width: 5px;
+        }
+        &::-webkit-scrollbar-track {
+            background: #ffffff3a;
+        }
+        &::-webkit-scrollbar-thumb {
+            background-color: #7165efea;
+            border-radius: 15px;
+        }
+        .bot{
+            display: flex;
+            padding-right: 50px;
+            height: fit-content;
+            margin-bottom: 15px;
+            .icon{
+                width: 30px;
+                height: 30px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 18px;
+                svg{
+                    position: relative;
+                    top: -1px;
+                }
+            }
+            p{
+                margin: 0;
+                padding: 4px 9px 2px 8px;
+                font-size: 13px;
+                font-weight: 500;
+                border-radius: 6px;
+                border: 1px solid #7065ef63;
+                line-height: 1.8;
+            }
+        }
+        .user{
+            padding-right: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            display: flex;
+            justify-content: flex-end;
+            padding-left: 50px;
+            p{
+                margin: 0;
+                padding: 4px 9px 2px 8px;
+                font-size: 13px;
+                font-weight: 500;
+                border-radius: 6px;
+                border: 1px solid #7065ef63;
+                line-height: 1.8;
+                width: fit-content;
+            }
+        }
+    }
+    .chatInput{
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        display: flex;
+        padding: 25px 0 15px 0;
+        gap: 5px;
+        justify-content: center;
+        input{
+            width: 85%;
+            border-radius: 30px;
+            font-size: 13px;
+            height: 35px;
+            text-indent: 3px;
+        }
+        button{
+            font-size: 13px;
+            height: 35px;
+            text-indent: 3px;
+            border-radius: 50%;
+            width: 35px;
+            svg{
+                font-size: 13px;
+                position: absolute;
+            }
+        }
+    }
+}
