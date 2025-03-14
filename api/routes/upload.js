@@ -48,7 +48,7 @@ module.exports = (db, bucket) => {
             
             uploadStream.end(req.file.buffer);
 
-            const summary = await generateSummary(text, req);
+            const summary = await generateSummary(text, req, 0);
             
             res.status(200).json({
                 summary, 
@@ -63,6 +63,16 @@ module.exports = (db, bucket) => {
         }
     });
 
+    router.post('/chat', async(req, res) => {
+        const { prompt } = req.query;
+        
+        try {
+            const response = await generateSummary(prompt, req, 1);
+            res.send({data: response});
+        } catch (error) {
+            console.log(error);
+        }
+    })
 
     router.get('/inspect/:id', async (req, res) => {
         try {
@@ -101,6 +111,8 @@ module.exports = (db, bucket) => {
         }
     });
 
+
+
     return router;
 };
 
@@ -122,41 +134,32 @@ async function extractPDFText(buffer) {
     }
 }
 
-async function generateSummary(text, req) {
+async function generateSummary(text, req, state) {
     try {
-
-        if (!req.session.chatHistory) {
-            req.session.chatHistory = [];
-        }
-
-        const messages = [{
-            role: "system",
-            content: process.env.PROMPT
-        }, ...req.session.chatHistory];
-
-        const userMessage = {
-            role: "user",
-            content: `PDF Content:\n${text}`
+      if (!req.session.chatHistory) {
+        req.session.chatHistory = [];
+        const systemMessage = {
+          role: "system",
+          content: state === 0 ? process.env.PROMPT : "Help the users"
         };
-
-        messages.push(userMessage);
-
-        const completion = await openai.chat.completions.create({
-            model: "google/gemini-2.0-flash-lite-preview-02-05:free",
-            messages,
-        });
-
-        const aiResponse = completion.choices[0].message.content;
-
-        req.session.chatHistory.push(
-            userMessage,
-            { role: "assistant", content: aiResponse }
-        );
-
-        await req.session.save();
-        return aiResponse;
-
+        req.session.chatHistory.push(systemMessage);
+      }
+  
+      const userMessage = { role: "user", content: text };
+      req.session.chatHistory.push(userMessage);
+  
+      const completion = await openai.chat.completions.create({
+        model: "google/gemini-2.0-flash-lite-preview-02-05:free",
+        messages: req.session.chatHistory,
+      });
+  
+      const aiResponse = completion.choices[0].message.content;
+      req.session.chatHistory.push({ role: "assistant", content: aiResponse });
+      await req.session.save();
+  
+      return aiResponse;
     } catch (error) {
-        console.error(error);
+      console.error(error);
+      throw error;
     }
-}
+  }
