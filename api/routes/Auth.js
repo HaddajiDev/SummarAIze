@@ -1,8 +1,8 @@
-import express from 'express';
-import bcrypt from 'bcryptjs';
-import userModel from '../models/UserModel.js';
-import transporter from '../config/nodemailer.js';
-import jwt from 'jsonwebtoken';
+const express = require('express');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const userModel = require('../models/UserModel.js');
+const transporter = require('../config/nodemailer.js');
 
 const router = express.Router();
 
