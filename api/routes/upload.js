@@ -26,7 +26,6 @@ const openai = new OpenAI({
 
 
 module.exports = (db, bucket) => {
-
     router.post('/upload', upload.single('file'), async (req, res) => {
         try {
             if (!req.file) return res.status(400).json({ 
@@ -110,12 +109,10 @@ module.exports = (db, bucket) => {
             res.status(500).json({ success: false, error: 'Server error' });
         }
     });
-
-
-
     return router;
 };
 
+// Validate PDF
 async function validatePDF(buffer) {
     try {
         const doc = await pdfjs.getDocument(buffer).promise;
@@ -125,6 +122,7 @@ async function validatePDF(buffer) {
     }
 }
 
+// Extract PDF Text
 async function extractPDFText(buffer) {
     try {
         const data = await pdf(buffer);
@@ -134,32 +132,33 @@ async function extractPDFText(buffer) {
     }
 }
 
+// Generate Summary
 async function generateSummary(text, req, state) {
     try {
-      if (!req.session.chatHistory) {
-        req.session.chatHistory = [];
-        const systemMessage = {
-          role: "system",
-          content: state === 0 ? process.env.PROMPT : "Help the users"
-        };
-        req.session.chatHistory.push(systemMessage);
-      }
-  
-      const userMessage = { role: "user", content: text };
-      req.session.chatHistory.push(userMessage);
-  
-      const completion = await openai.chat.completions.create({
-        model: "google/gemini-2.0-flash-lite-preview-02-05:free",
-        messages: req.session.chatHistory,
-      });
-  
-      const aiResponse = completion.choices[0].message.content;
-      req.session.chatHistory.push({ role: "assistant", content: aiResponse });
-      await req.session.save();
-  
-      return aiResponse;
+        if (!req.session.chatHistory) {
+            req.session.chatHistory = [];
+            const systemMessage = {
+                role: "system",
+                content: state === 0 ? process.env.PROMPT : "Help the users"
+            };
+            req.session.chatHistory.push(systemMessage);
+        }
+
+        const userMessage = { role: "user", content: text };
+        req.session.chatHistory.push(userMessage);
+
+        const completion = await openai.chat.completions.create({
+            model: "google/gemini-2.0-flash-lite-preview-02-05:free",
+            messages: req.session.chatHistory,
+        });
+
+        const aiResponse = completion.choices[0].message.content;
+        req.session.chatHistory.push({ role: "assistant", content: aiResponse });
+        await req.session.save();
+
+        return aiResponse;
     } catch (error) {
-      console.error(error);
-      throw error;
+        console.error(error);
+        throw error;
     }
-  }
+}

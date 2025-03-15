@@ -2,10 +2,20 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/UserModel');
-const transporter = require('../Nodemailer');
+const transporter = require('../lib/Nodemailer');
+import crypto from "crypto";
 
 const router = express.Router();
-//------------------------------register-login-logout--------------------------------------//
+
+// Generate OTP
+function generateSecureCode(length=6) {
+    return crypto.randomBytes(length)
+        .toString("base64")
+        .replace(/[^a-zA-Z0-9]/g, '')
+        .slice(0, length);
+}
+
+// Signup
 router.post('/register', async (req, res) => {
     const { name, email, password } = req.body;
 
@@ -14,108 +24,119 @@ router.post('/register', async (req, res) => {
     }
 
     try {
-        const existingUser = await userModel.findOne({ email }).exec();
+        const existingUser = await userModel.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ success: false, message: "User already exists" });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new userModel({ name, email, password: hashedPassword });
+        const otp = generateSecureCode(6);
+
+
+
+        const user = new userModel({
+            name,
+            email,
+            password: hashedPassword,
+            // verifyotp: otp,
+            // verifyOtpExpireAt: Date.now() + 24*60*60*1000
+        });
 
         await user.save();
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV !== 'development',
-            sameSite: process.env.NODE_ENV === 'development' ? 'none' : 'strict',
-            maxAge: 7 * 24 * 60 * 60 * 1000
+            secure: process.env.NODE_ENV != 'dev',
+            sameSite: "none",
+            maxAge: 24 * 60 * 60 * 1000
         });
 
-        const mailoptions = {
-            from: process.env.SENDER_EMAIL,
-            to: email,
-            subject: 'Welcome to our app',
-            html: `
-                <html>
-                <head>
-                    <style>
-                        body {
-                            font-family: 'Arial', sans-serif;
-                            background-color: #f0f8ff;
-                            margin: 0;
-                            padding: 0;
-                            color: #333;
-                        }
-                        .container {
-                            width: 100%;
-                            max-width: 600px;
-                            margin: 0 auto;
-                            background-color: #fff;
-                            padding: 20px;
-                            border-radius: 10px;
-                            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                        }
-                        .header {
-                            text-align: center;
-                            margin-bottom: 30px;
-                        }
-                        .header h1 {
-                            color: rgb(0, 41, 174);
-                            font-size: 2.5em;
-                        }
-                        .content {
-                            text-align: center;
-                            font-size: 1.2em;
-                            line-height: 1.6;
-                            color: #555;
-                        }
-                        .footer {
-                            text-align: center;
-                            margin-top: 30px;
-                            font-size: 0.9em;
-                            color: #888;
-                        }
-                        .footer a {
-                            color: rgb(0, 41, 174);
-                            text-decoration: none;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <div class="header">
-                            <h1>Welcome to Our App!</h1>
-                        </div>
-                        <div class="content">
-                            <p>We are thrilled to have you on board. Get ready to explore all the amazing features our app has to offer!</p>
-                            <p>Feel free to contact us if you need any assistance. We're here to help!</p>
-                        </div>
-                        <div class="footer">
-                            <p>Stay connected with us!</p>
-                            <p><a href="#">Visit our website</a></p>
-                        </div>
-                    </div>
-                </body>
-                </html>`
-        };
+        // const mailoptions = {
+        //     from: process.env.SENDER_EMAIL,
+        //     to: email,
+        //     subject: 'Welcome to our app',
+        //     html: `
+        //         <html>
+        //         <head>
+        //             <style>
+        //                 body {
+        //                     font-family: 'Arial', sans-serif;
+        //                     background-color: #f0f8ff;
+        //                     margin: 0;
+        //                     padding: 0;
+        //                     color: #333;
+        //                 }
+        //                 .container {
+        //                     width: 100%;
+        //                     max-width: 600px;
+        //                     margin: 0 auto;
+        //                     background-color: #fff;
+        //                     padding: 20px;
+        //                     border-radius: 10px;
+        //                     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        //                 }
+        //                 .header {
+        //                     text-align: center;
+        //                     margin-bottom: 30px;
+        //                 }
+        //                 .header h1 {
+        //                     color: rgb(0, 41, 174);
+        //                     font-size: 2.5em;
+        //                 }
+        //                 .content {
+        //                     text-align: center;
+        //                     font-size: 1.2em;
+        //                     line-height: 1.6;
+        //                     color: #555;
+        //                 }
+        //                 .footer {
+        //                     text-align: center;
+        //                     margin-top: 30px;
+        //                     font-size: 0.9em;
+        //                     color: #888;
+        //                 }
+        //                 .footer a {
+        //                     color: rgb(0, 41, 174);
+        //                     text-decoration: none;
+        //                 }
+        //             </style>
+        //         </head>
+        //         <body>
+        //             <div class="container">
+        //                 <div class="header">
+        //                     <h1>Welcome to Our App!</h1>
+        //                 </div>
+        //                 <div class="content">
+        //                     <p>We are thrilled to have you on board. Get ready to explore all the amazing features our app has to offer!</p>
+        //                     <p>Feel free to contact us if you need any assistance. We're here to help!</p>
+        //                 </div>
+        //                 <div class="footer">
+        //                     <p>Stay connected with us!</p>
+        //                     <p><a href="#">Visit our website</a></p>
+        //                 </div>
+        //             </div>
+        //         </body>
+        //         </html>`
+        // };
 
-        transporter.sendMail(mailoptions, (error, info) => {
-            if (error) {
-                console.log('Error sending email:', error);
-                return res.status(500).json({ success: false, message: error.message });
-            } else {
-                console.log('Email sent:', info.response);
-                return res.json({ success: true, message: 'Registration successful' });
-            }
-        });
+        // transporter.sendMail(mailoptions, (error, info) => {
+        //     if (error) {
+        //         console.log('Error sending email:', error);
+        //         return res.status(500).json({ success: false, message: error.message });
+        //     } else {
+        //         console.log('Email sent:', info.response);
+        //         return res.json({ success: true, message: 'Registration successful' });
+        //     }
+        // });
 
     } catch (error) {
         console.error("❌ Error:", error);
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 });
+// Login
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
@@ -124,7 +145,7 @@ router.post('/login', async (req, res) => {
     }
 
     try {
-        const user = await userModel.findOne({ email }).exec();
+        const user = await userModel.findOne({ email });
         if (!user) {
             return res.status(400).json({ success: false, message: "User not found" });
         }
@@ -134,12 +155,12 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ success: false, message: "Incorrect password" });
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV !== 'development', 
-            sameSite: process.env.NODE_ENV === 'development' ? 'none' : 'strict',  
-            maxAge: 7 * 24 * 60 * 60 * 1000 
+            secure: process.env.NODE_ENV != 'dev', 
+            sameSite: "none",
+            maxAge: 24 * 60 * 60 * 1000 
         });
 
         return res.json({ success: true, message: 'Login successful' });
@@ -148,19 +169,21 @@ router.post('/login', async (req, res) => {
         return res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 });
+// Logout
 router.post('/logout', async (req, res) => {
     try {
         res.clearCookie('token', {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+            secure: process.env.NODE_ENV != 'dev',
+            sameSite: "none",
         });
         return res.json({ success: true, message: "Logged out successfully" });
     } catch (error) {
         return res.json({ success: false, message: error.message });
     }
 });
-//------------------------------reset-password--------------------------------------//
+
+// Reset Password
 router.post('/send-reset-otp', async (req, res) => {
     const { email } = req.body;
 
@@ -233,7 +256,8 @@ router.post('/reset-password', async (req, res) => {
         return res.json({ success: false, message: error.message });
     }
 });
-//------------------------------verify-email--------------------------------------//
+
+// Verify Email
 router.post('/send-verify-otp', async (req, res) => {
     try {
         const { userId } = req.body;
@@ -242,13 +266,13 @@ router.post('/send-verify-otp', async (req, res) => {
             return res.json({ success: false, message: "Account already verified" });
         }
 
-        const otp = String(Math.floor(100000 + Math.random() * 900000));
-        user.verifyOtp = otp;
-        user.verifyOtpExpireAt = Date.now() + 24 * 60 * 60 * 1000; // OTP expiry time: 24 hours
+        const otp = generateSecureCode(6);
+        user.resetOtp = otp;
+        user.resetOtpExpireAt = Date.now() + 24 * 60 * 60 * 1000;
         await user.save();
 
         const mailOptions = {
-            from: process.env.SENDER_EMAIL,
+            from: "SmartPDF",
             to: user.email,
             subject: 'Account Verification',
             html: `
@@ -276,7 +300,7 @@ router.post('/verify-email', async (req, res) => {
     }
 
     try {
-        const user = await userModel.findById(userId).exec();
+        const user = await userModel.findById(userId);
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
@@ -289,9 +313,9 @@ router.post('/verify-email', async (req, res) => {
             return res.status(400).json({ success: false, message: "OTP expired" });
         }
 
-        user.isAcconuntVerified = true;
+        // user.isAcconuntVerified = true;
         user.verifyotp = '';
-        user.verifyotpexpireAt = 0;
+        user.verifyotpexpireAt = null;
         await user.save();
 
         return res.json({ success: true, message: "Email verified successfully" });
