@@ -1,26 +1,37 @@
 const { MongoClient } = require('mongodb');
+const mongoose = require('mongoose');
 
 const url = process.env.URI;
 const dbName = 'salamHack'; 
 
-let db;
+let dbClient;
 
-async function connect() {
-    if (db) {
-        console.log('Using existing db connection');
+async function connectClient() {
+    if (dbClient) {
+        console.log('Using existing db client connection');
         return db;
     }
-
     try {
         const client = new MongoClient(url);
         await client.connect();
-        db = client.db(dbName);
-        console.log('Connected to db');
-        return db;
+        dbClient = client.db(dbName);
+        console.log('mongoClient connected');
+        return dbClient;
     } catch (error) {
-        console.error('Error connecting to db:', error);
+        console.error('Error connecting to db client:', error);
         throw error;
     }
 }
 
-module.exports = connect;
+async function connectMongoose() {
+    try {
+        await mongoose.connect(url,{dbName: dbName});
+        console.log('mongoose connected');
+    } catch (error) {
+        console.error('Error connecting to db mongoose:', error);
+        throw error;
+    }
+}
+
+
+module.exports = {connectMongoose, connectClient};

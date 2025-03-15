@@ -26,7 +26,6 @@
     "openai": "^4.87.3",
     "pdf-parse": "^1.1.1",
     "pdfjs-dist": "^2.16.105",
-    "stream": "^0.0.3",
-    "tesseract.js": "4.0.2"
+    "stream": "^0.0.3"
   }
 }

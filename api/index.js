@@ -21,12 +21,13 @@ app.use(session({
 const ChatRoutes = require("./routes/upload");
 app.use("/resources",require("./routes/resources"));
 app.use("/quiz",require("./routes/quizGenRoute"));
-app.use("/auth", require("./routes/Auth"));
+// app.use("/auth", require("./routes/Auth"));
 
 
 (async () => {
   try {
-      const db = await connect();
+      await connect.connectMongoose();
+      const db = await connect.connectClient();
       const bucket = new GridFSBucket(db, {
           bucketName: 'uploads'
       });
