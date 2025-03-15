@@ -15,6 +15,8 @@
     "@react-pdf/renderer": "^4.3.0",
     "@tailwindcss/typography": "^0.5.16",
     "antd": "^5.24.3",
+    "axios": "^1.8.3",
+    "cloudinary": "^2.6.0",
     "github-markdown-css": "^5.8.1",
     "pdfjs-dist": "^4.10.38",
     "react": "^19.0.0",
@@ -22,7 +24,9 @@
     "react-icons": "^5.5.0",
     "react-markdown": "^10.1.0",
     "react-pdf": "^9.2.1",
-    "sass": "^1.85.1"
+    "react-router-dom": "^7.3.0",
+    "sass": "^1.85.1",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
