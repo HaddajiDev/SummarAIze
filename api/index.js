@@ -3,13 +3,16 @@ const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
 const { GridFSBucket } = require('mongodb');
-const connect = require('./lib/db_connect');
+const connect = require('./lib/db');
 
 const PORT = process.env.PORT;
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:5173"],
+  credentials: true
+}));
 app.use(express.json());
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -29,7 +32,7 @@ app.use("/quiz",require("./routes/quizGenRoute"));
       await connect.connectMongoose();
       const db = await connect.connectClient();
       const bucket = new GridFSBucket(db, {
-          bucketName: 'uploads'
+        bucketName: 'uploads'
       });
 
       app.use('/api', ChatRoutes(db, bucket));      

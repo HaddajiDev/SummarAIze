@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom"
 import Home from "./Home/home"
 import Landing from "./Landing/landing"
-import { usePDFStore } from "./store/PDFStore"
+import usePDFStore from "./store/PDFStore"
 
 function App() {
   const pdfUrl = usePDFStore(state=>state.pdfUrl);

@@ -1,10 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { OpenAI } = require('openai');
 const { ObjectId } = require('mongodb');
 const multer = require('multer');
 const pdf = require('pdf-parse');
 const pdfjs = require('pdfjs-dist');
+const { openai } = require('../lib/ai');
+const cloudinary = require("../lib/cloudinary");
+const streamifier = require("streamifier");
 
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -18,12 +20,6 @@ const upload = multer({
         }
     }
 });
-
-const openai = new OpenAI({
-    baseURL: process.env.BASE_URL,
-    apiKey: process.env.OPENROUTER_API_KEY
-});
-
 
 module.exports = (db, bucket) => {
     router.post('/upload', upload.single('file'), async (req, res) => {
@@ -41,6 +37,15 @@ module.exports = (db, bucket) => {
                 });
             }
 
+            const cloudinaryRes = await uploadToCloudinary(req.file);
+
+            if(!cloudinaryRes){
+                return res.status(500).json({
+                    success: false,
+                    error: 'Error uploading to cloudinary'
+                });
+            }
+
             const text = await extractPDFText(req.file.buffer);
             
             const uploadStream = bucket.openUploadStream(req.file.originalname);
@@ -50,7 +55,8 @@ module.exports = (db, bucket) => {
             const summary = await generateSummary(text, req, 0);
             
             res.status(200).json({
-                summary, 
+                summary,
+                url: cloudinaryRes.secure_url
             });
 
         } catch (error) {
@@ -139,7 +145,8 @@ async function generateSummary(text, req, state) {
             req.session.chatHistory = [];
             const systemMessage = {
                 role: "system",
-                content: state === 0 ? process.env.PROMPT : "Help the users"
+                // content: state === 0 ? process.env.SUMMARY_PROMPT : "Help the users"
+                content: "Provide a concise summary of the following text in Markdown format, covering the key points and main ideas without answering any specific questions. The summary should be clear, well-structured, and directly present the most important information from the document."
             };
             req.session.chatHistory.push(systemMessage);
         }
@@ -161,4 +168,22 @@ async function generateSummary(text, req, state) {
         console.error(error);
         throw error;
     }
+}
+
+// Upload To Cloudinary
+async function uploadToCloudinary(file){
+    return new Promise((resolve, reject) => {
+        let stream = cloudinary.uploader.upload_stream(
+            { upload_preset: process.env.CLOUDINARY_PRESET },
+            (error, result) => {
+                if (error) {
+                    console.error("Cloudinary upload error:", error);
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+            }
+        );
+        streamifier.createReadStream(file.buffer).pipe(stream);
+    });
 }
