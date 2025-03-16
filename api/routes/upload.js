@@ -145,7 +145,7 @@ async function generateSummary(text, req, state) {
             req.session.chatHistory = [];
             const systemMessage = {
                 role: "system",
-                content: state === 0 ? process.env.SUMMARY_PROMPT : "Help the users"
+                content: state === 0 ? process.env.SUMMARY_PROMPT : process.env.HELP_PROMPT
             };
             req.session.chatHistory.push(systemMessage);
         }
