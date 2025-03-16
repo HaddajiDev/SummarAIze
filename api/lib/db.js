@@ -2,7 +2,7 @@ const { MongoClient } = require('mongodb');
 const mongoose = require('mongoose');
 
 const url = process.env.URI;
-const dbName = 'salamHack'; 
+const dbName = 'SalamHack'; 
 
 let dbClient;
 
