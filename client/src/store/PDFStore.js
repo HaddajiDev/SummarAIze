@@ -6,6 +6,7 @@ const usePDFStore = create((set,get)=>({
     uploadLoading: false,
     summary: null,
     chat: [],
+    replayLoading: false,
 
     setPDFURL: (url) => set({pdfUrl:url}),
 
@@ -32,11 +33,14 @@ const usePDFStore = create((set,get)=>({
     },
 
     sendChat: async(prompt) => {
+        set({ replayLoading: true });
         try {
             const result = await instanceAxios.post('/api/chat', { prompt });
             return result.data.data;
         } catch (error) {
             console.error(error);
+        } finally {
+            set({ replayLoading: false });
         }
     },
 

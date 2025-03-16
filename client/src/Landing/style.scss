@@ -1,55 +1,85 @@
 #landing{
-    height: 100vh;
+    height: calc(100vh - 72px);
     display: flex;
     justify-content: center;
-    background-color: #f5f5f5;
+    background-color: #7065ef;
     .content{
-        width: 550px;
+        max-width: 655px;
         height: fit-content;
         margin-top: 110px;
         h1{
             text-align: center;
-            font-size: 35px;
+            font-size: 65px;
             font-weight: 800;
             margin: 0 0 5px 0;
+            color: #FFF;
         }
         p{
             text-align: center;
-            font-size: 17px;
+            font-size: 18px;
             font-weight: 500;
-            line-height: 1.3;
+            line-height: 1.4;
             margin: 0;
+            color: #FFF;
+            margin-top: 10px;
         }
-        .upload{
+        .container-upload .dropzone{
             margin: 0 auto;
-            margin-top: 30px;
-            background-color: #7065ef;
-            width: 265px;
-            height: 60px;
+            margin-top: 55px;
+            width: 150px;
+            height: 150px;
             color: #FFF;
             font-size: 20px;
             font-weight: 600;
             line-height: 1.6;
             position: relative;
-            border-radius: 3px;
-            display: flex;
             justify-content: center;
             align-items: center;
-            svg{
-                font-size: 22px;
+            border-radius: 50%;
+            border: 7px solid #FFF;
+            cursor: pointer;
+            overflow: hidden;
+            .upload-btn{
                 position: relative;
-                top: -2px;
-                margin-right: 8px;
-            }
-            input{
-                position: absolute;
-                top: 0;
-                left: 0;
                 width: 100%;
                 height: 100%;
-                cursor: pointer;
-                opacity: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                transition: all .2s;
+                margin-top: 0;
+                svg{
+                    font-size: 50px;
+                    color: #FFF;
+                }
+                input{
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    cursor: pointer;
+                    opacity: 0;
+                }
+                &.loading{
+                    margin-top: -150px;
+                }
+            }
+            .upLoading{
+                position: relative;
+                width: 100%;
+                height: 100%;
+                transition: all 0.2s;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
         }
+    }
+    .img1{
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 400px;
     }
 }

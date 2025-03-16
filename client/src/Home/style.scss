@@ -1,20 +1,19 @@
 #home{
-    height: 97vh;
+    height: calc(100vh - 90px);
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     background: #fafafe;
     padding-left: 20px;
+    position: relative;
     .r-p{
-        width: 310px;
-        height: 90vh;
-        padding: 43px 0;
+        width: 360px;
     }
     .menu{
         width: 100px;
         background-color: #7065ef;
         border-left: 1px solid rgba(112, 101, 239, 0.24);
-        position: fixed;
+        position: absolute;
         right: 0;
         top: 0;
         height: 100%;
@@ -23,7 +22,7 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 9px;
-            margin-top: 98px;
+            margin-top: 97px;
             p{
                 position: relative;
                 color: #FFF;
@@ -37,23 +36,26 @@
                 user-select: none;
                 transition: all .2s;
                 width: 100%;
-                &:after{
-                    content: "";
-                    background: transparent;
-                    transition: all .2s;
-                    border-radius: 0 30px 30px 0;
-                    width: 108%;
-                    height: 100%;
-                    position: absolute;
-                    top: 0;
-                    left: -4px;
-                    z-index: -1;
-                }
+                // &:after{
+                //     content: "";
+                //     background: transparent;
+                //     transition: all .2s;
+                //     border-radius: 0 30px 30px 0;
+                //     width: 108%;
+                //     height: 100%;
+                //     position: absolute;
+                //     top: 0;
+                //     left: -4px;
+                //     z-index: -1;
+                // }
                 &.active{
+                    border-radius: 0 30px 30px 0;
+                    // color: #7065ef;
+                    // &:after{
+                    //     background: #fafafe;
+                    // }
                     color: #7065ef;
-                    &:after{
-                        background: #fafafe;
-                    }
+                    background-color: #FFF;
                 }
                 svg{
                     display: block;

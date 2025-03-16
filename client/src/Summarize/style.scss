@@ -1,5 +1,5 @@
 #summarize{
-    height: 100%;
+    height: calc(100vh - 94px);
     border-radius: 4px 0 0 4px;
     border: 2px solid #7065ef;
     position: relative;
@@ -36,13 +36,14 @@
         h1, h2, h3, h4, h5, h6 {
             color: #0d133a;
             font-weight: bold;
-            font-size: 21px;
-            margin-bottom: 9px;
+            font-size: 16px;
+            margin-bottom: 5px;
         }
 
         // Paragraphs
         p {
             margin-bottom: 5px;
+            font-size: 14px;
         }
 
         // Lists
@@ -58,6 +59,7 @@
         // Bold Text
         strong {
             color: #7165ef;
+            font-size: 14px;
         }
 
         // Links
@@ -97,5 +99,11 @@
             font-family: "Courier New", monospace;
             color: #c0392b;
         }
+    }
+    .loading .load canvas{
+        width: 200px !important;
+        height: inherit !important;
+        margin: 0 auto;
+        display: block;
     }
 }

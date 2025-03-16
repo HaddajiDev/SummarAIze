@@ -1,5 +1,5 @@
 #chatbot{
-    height: 100%;
+    height: calc(100vh - 94px);
     border-radius: 4px 0 0 4px;
     border: 2px solid #7065ef;
     position: relative;
@@ -34,9 +34,10 @@
         }
         .bot{
             display: flex;
-            padding-right: 50px;
+            padding-right: 25px;
             height: fit-content;
             margin-bottom: 15px;
+            padding-left: 10px;
             .icon{
                 width: 30px;
                 height: 30px;
@@ -44,37 +45,61 @@
                 justify-content: center;
                 align-items: center;
                 font-size: 18px;
+                margin-right: 10px;
                 svg{
                     position: relative;
                     top: -1px;
                 }
             }
-            p{
+            .cont{
                 margin: 0;
                 padding: 4px 9px 2px 8px;
                 font-size: 13px;
                 font-weight: 500;
                 border-radius: 6px;
-                border: 1px solid #7065ef63;
                 line-height: 1.8;
+                box-shadow: 0 0 2px 3px rgb(112 101 239 / 13%);
+                position: relative;
+                .load canvas{
+                    width: 130px !important;
+                    height: inherit !important;
+                    margin: 0 auto;
+                    display: block;
+                    position: absolute;
+                    top: -15px;
+                    left: -17px;
+                }
+                ul{
+                    margin-top: 1px;
+                }
+                h2{
+                    font-size: 14px;
+                    margin-bottom: 5px;
+                }
+            }
+            p{
+                margin: 0;
+                // margin-bottom: 5px;
             }
         }
         .user{
             padding-right: 10px;
             margin-bottom: 15px;
-            overflow: hidden;
             display: flex;
             justify-content: flex-end;
             padding-left: 50px;
-            p{
+            .cont{
                 margin: 0;
                 padding: 4px 9px 2px 8px;
                 font-size: 13px;
                 font-weight: 500;
                 border-radius: 6px;
-                border: 1px solid #7065ef63;
                 line-height: 1.8;
-                width: fit-content;
+                box-shadow: 0 0 2px 3px rgb(112 101 239 / 13%);
+                p{
+                    margin: 0;
+                    // margin-bottom: 5px;
+                }
             }
         }
     }

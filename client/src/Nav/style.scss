@@ -1,0 +1,23 @@
+nav{
+    padding: 20px 50px;
+    overflow: hidden;
+    .l-s{
+        float: left;
+        h1{
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+            color: #0d133a;
+            padding: 3px 0;
+        }
+    }
+    .r-s{
+        float: right;
+        button{
+            font-weight: 600;
+            &:first-of-type{
+                margin-right: 5px;
+            }
+        }
+    }
+}
