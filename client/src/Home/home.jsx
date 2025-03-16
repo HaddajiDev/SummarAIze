@@ -14,7 +14,7 @@ import { useState } from "react";
 
 
 export default function Home() {
-    const [option, setOption] = useState("chatbot");
+    const [option, setOption] = useState("summarize");
     return(
         <div id="home">
             <PDFView />

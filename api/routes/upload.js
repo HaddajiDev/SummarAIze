@@ -69,7 +69,7 @@ module.exports = (db, bucket) => {
     });
 
     router.post('/chat', async(req, res) => {
-        const { prompt } = req.query;
+        const { prompt } = req.body;
         
         try {
             const response = await generateSummary(prompt, req, 1);
@@ -145,8 +145,7 @@ async function generateSummary(text, req, state) {
             req.session.chatHistory = [];
             const systemMessage = {
                 role: "system",
-                // content: state === 0 ? process.env.SUMMARY_PROMPT : "Help the users"
-                content: "Provide a concise summary of the following text in Markdown format, covering the key points and main ideas without answering any specific questions. The summary should be clear, well-structured, and directly present the most important information from the document."
+                content: state === 0 ? process.env.SUMMARY_PROMPT : "Help the users"
             };
             req.session.chatHistory.push(systemMessage);
         }
