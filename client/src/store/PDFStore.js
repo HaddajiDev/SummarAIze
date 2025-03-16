@@ -7,6 +7,7 @@ const usePDFStore = create((set,get)=>({
     summary: null,
     chat: [],
     replayLoading: false,
+    resources : [],
 
     setPDFURL: (url) => set({pdfUrl:url}),
 
@@ -43,6 +44,20 @@ const usePDFStore = create((set,get)=>({
             set({ replayLoading: false });
         }
     },
+
+    fetchresource: async () => {
+        try {
+            const summary = get().summary;
+            const result = await instanceAxios.post('/api/resources', { text: summary });
+            
+            set({resources:result.data.data});
+    
+        } catch (error) {
+            console.error("Error fetching resources:", error);
+            return null;
+        }
+    },
+    
 
     AddChat: (message) => {
         set({ chat: [...get().chat, message]})
