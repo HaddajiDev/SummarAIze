@@ -11,7 +11,7 @@ export default function PDFView() {
     useEffect(() => {
         if (!pdfUrl) return;
         WebViewer({
-            path: '/dist',
+            path: '/webview',
             initialDoc: pdfUrl,
             isReadOnly: true,
             licenseKey: 'demo:1741964115564:615810ee03000000004151de0f7af66a8c25176023784464465fdc7265',
