@@ -10,7 +10,7 @@ const openrouter = new OpenAI({
 
 router.post('/', async (req, res) => {
   try {
-    const { text,nbq, model = 'meta-llama/llama-3.3-70b-instruct:free' } = req.body;
+    const { text, model = 'meta-llama/llama-3.3-70b-instruct:free' } = req.body;
 
     if (!text) {
       return res.status(400).json({ error: 'Text parameter is required' });
@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
 
     const prompt = `
       Generate a quiz based on the following text. Follow these requirements:
-      - Create ${nbq} multiple-choice questions
+      - Create 5 multiple-choice questions
       - Each question should have 4 options
       - Indicate the correct answer with an index (0-3)
       - Format the response as a valid JSON array only
