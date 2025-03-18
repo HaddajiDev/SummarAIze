@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import usePDFStore from "../store/PDFStore";
 import ReactMarkdown from "react-markdown";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import Bot from "../assets/Chat bot-pana.svg";
 
 export default function ChatBot() {
     const chats = usePDFStore(state => state.chat);
@@ -63,6 +64,9 @@ export default function ChatBot() {
                         </div>
                     </div>
                     
+                )}
+                {chats.length === 0 && (
+                    <img className="botCov" src={Bot} />
                 )}
             </div>
             <div className="chatInput">

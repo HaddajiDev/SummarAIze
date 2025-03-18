@@ -15,10 +15,10 @@ export default function Landing() {
 
     const handleFileChange = async (file) => {
         // const file = event.target.files[0];
-        if(file && file.size > 10000000){
+        if(file && file.size > 2000000){
             messageApi.open({
-                type: 'error',
-                content: 'File size is too large. Please upload a file less than 10MB',
+            type: 'error',
+            content: 'File size is too large. Please upload a file less than 2MB',
             });
             return;
         }

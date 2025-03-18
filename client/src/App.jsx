@@ -11,8 +11,8 @@ function App() {
       <Nav />
       <Routes>
         <Route path='/' element={<Landing />} />
-        <Route path='/view' element={pdfUrl != null ? <Home /> : <Navigate to="/" />} />
-        {/* <Route path='/view' element={<Home />} /> */}
+        {/* <Route path='/view' element={pdfUrl != null ? <Home /> : <Navigate to="/" />} /> */}
+        <Route path='/view' element={<Home />} />
       </Routes>
     </div>
   )

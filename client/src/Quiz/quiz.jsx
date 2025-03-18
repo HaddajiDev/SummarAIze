@@ -1,34 +1,12 @@
 import "./style.scss";
 import { MdOutlineQuiz } from "react-icons/md";
-import { Button, Radio } from 'antd';
-import { useEffect, useRef, useState } from "react";
-import instanceAxios from "../lib/axios";
+import { Button, Radio, Spin } from 'antd';
+import { useState } from "react";
 import usePDFStore from "../store/PDFStore";
 
 export default function Quiz() {
-    const [quizes, setQuizes] = useState([]);
+    const { handleFetchQuizes, quizes, quizesLoading } = usePDFStore();
     const [selectedAnswers, setSelectedAnswers] = useState({});
-    const [loading, setLoading] = useState(false);
-    const formRef = useRef(null);
-    const { summary } = usePDFStore();
-
-    const handleFetchQuizes = async () => {
-        setLoading(true);
-        try {
-            const response = await instanceAxios.post('/quiz', { text: summary });
-            setQuizes(response.data);
-            setSelectedAnswers({});
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-
-    useEffect(()=>{
-        handleFetchQuizes();
-    },[])
 
     const handleAnswerChange = (questionIndex, value) => {
         setSelectedAnswers(prev => ({...prev,[questionIndex]: value}));
@@ -41,16 +19,14 @@ export default function Quiz() {
                 score++;
             }
         });
-
         alert(`Your Score: ${score}/${quizes.length}`);
-        formRef.current?.reset();
         setSelectedAnswers({});
     };
 
     return (
         <div id="quiz">
             <h1 className="title"><MdOutlineQuiz /> Quiz</h1>
-            <div className="quiz_content" ref={formRef}>
+            <div className="quiz_content">
                 {quizes.map((quiz, i) => (
                     <div className="qz" key={i}>
                         <h2>Question {i + 1}</h2>
@@ -58,6 +34,7 @@ export default function Quiz() {
                         <Radio.Group
                             onChange={(e) => handleAnswerChange(i, e.target.value)}
                             value={selectedAnswers[i]}
+                            disabled={quizesLoading}
                         >
                             {quiz.options.map((option, optionIndex) => (
                                 <Radio key={optionIndex} value={optionIndex}>
@@ -69,11 +46,17 @@ export default function Quiz() {
                 ))}
             </div>
             <div className="btns">
-                <Button type="primary" onClick={handleFetchQuizes} loading={loading}>
-                    Generate Other Quiz
+                <Button type="primary" onClick={()=>{
+                    handleFetchQuizes();
+                    setSelectedAnswers({});
+                }} loading={quizesLoading}>
+                    {quizesLoading ? "": "Other Quiz"}
                 </Button>
-                <Button type="primary" onClick={handleSubmitQuizes}>
-                    Submit
+                <Button type="primary" 
+                    onClick={handleSubmitQuizes} 
+                    disabled={quizesLoading||Object.entries(selectedAnswers).length<quizes.length}
+                >
+                    Check
                 </Button>
             </div>
         </div>

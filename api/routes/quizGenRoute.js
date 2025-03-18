@@ -10,7 +10,7 @@ const openrouter = new OpenAI({
 
 router.post('/', async (req, res) => {
   try {
-    const { text, model = 'meta-llama/llama-3.3-70b-instruct:free' } = req.body;
+    const { text } = req.body;
 
     if (!text) {
       return res.status(400).json({ error: 'Text parameter is required' });
@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
     `;
 
     const response = await openrouter.chat.completions.create({
-      model: model,
+      model: "google/gemini-2.0-flash-lite-preview-02-05:free",
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.7,
       response_format: { type: "json_object" }

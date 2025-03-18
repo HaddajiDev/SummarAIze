@@ -1,6 +1,7 @@
 #pdf-view{
-    width: calc(100% - 469px);
-    height: calc(100vh - 94px);
+    // width: calc(100% - 469px);
+    // height: calc(100vh - 94px);
+    height: 100%;
     .content{
         height: 100%;
         box-shadow: 0 0 5px 4px #7065ef33;

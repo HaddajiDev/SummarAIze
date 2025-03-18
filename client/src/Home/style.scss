@@ -6,8 +6,22 @@
     background: #fafafe;
     padding-left: 20px;
     position: relative;
+    .ant-splitter{
+        height: inherit !important;
+        .ant-splitter-panel{
+            overflow: inherit;
+        }
+        .ant-splitter-bar .ant-splitter-bar-dragger::after {
+            height: 30px;
+            width: 4px;
+            background: rgb(112 101 239);
+            border-radius: 30px;
+            transform: none;
+        }
+    }
     .r-p{
-        width: 360px;
+        // width: 360px;
+        width: calc(100% - 100px);
     }
     .menu{
         width: 100px;

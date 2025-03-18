@@ -45,14 +45,15 @@ module.exports = (db, bucket) => {
                     error: 'Error uploading to cloudinary'
                 });
             }
-
+            
             const text = await extractPDFText(req.file.buffer);
             
             const uploadStream = bucket.openUploadStream(req.file.originalname);
             
             uploadStream.end(req.file.buffer);
-
+            
             const summary = await generateSummary(text, req, 0);
+            console.log();
             
             res.status(200).json({
                 summary,

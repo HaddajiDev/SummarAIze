@@ -9,6 +9,8 @@ const usePDFStore = create((set,get)=>({
     replayLoading: false,
     resources : [],
     resourcesLoading: false,
+    quizes: [],
+    quizesLoading: false,
 
     setPDFURL: (url) => set({pdfUrl:url}),
 
@@ -27,6 +29,7 @@ const usePDFStore = create((set,get)=>({
             set({pdfUrl: res.data.url});
             set({summary: res.data.summary});
             get().fetchresource();
+            get().handleFetchQuizes();
             // console.log(get().summary);
         } catch (error) {
             console.error('Upload error:', error);
@@ -71,6 +74,19 @@ const usePDFStore = create((set,get)=>({
             set({resourcesLoading:false});
         }
     },
+    
+    handleFetchQuizes: async () => {
+        set({quizesLoading:true});
+        try {
+            const response = await instanceAxios.post('/quiz', { text: get().summary });
+            set({quizes:response.data});
+            console.log(response.data);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            set({quizesLoading:false});
+        }
+    }
 }));
 
 export default usePDFStore;
