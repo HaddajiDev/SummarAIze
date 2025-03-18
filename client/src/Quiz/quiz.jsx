@@ -1,6 +1,7 @@
+// Updated quiz.jsx
 import "./style.scss";
 import { MdOutlineQuiz } from "react-icons/md";
-import { Button, Radio, Spin } from 'antd';
+import { Button, Radio, Spin, Modal } from 'antd';
 import { useState } from "react";
 import usePDFStore from "../store/PDFStore";
 import ReactMarkdown from "react-markdown";
@@ -8,21 +9,28 @@ import ReactMarkdown from "react-markdown";
 export default function Quiz() {
     const { handleFetchQuizes, quizes, quizesLoading } = usePDFStore();
     const [selectedAnswers, setSelectedAnswers] = useState({});
+    const [showScoreModal, setShowScoreModal] = useState(false);
+    const [score, setScore] = useState(0);
 
     const handleAnswerChange = (questionIndex, value) => {
-        setSelectedAnswers(prev => ({...prev,[questionIndex]: value}));
+        setSelectedAnswers(prev => ({...prev, [questionIndex]: value}));
     };
 
     const handleSubmitQuizes = () => {
-        let score = 0;
+        let newScore = 0;
         quizes.forEach((quiz, index) => {
             if (selectedAnswers[index] === quiz.answer) {
-                score++;
+                newScore++;
             }
         });
-        alert(`Your Score: ${score}/${quizes.length}`);
-        setSelectedAnswers({});
+        setScore(newScore);
+        setShowScoreModal(true);
     };
+
+    const handleModalClose = () => {
+        setShowScoreModal(false);
+        setSelectedAnswers({});
+    }
 
     return (
         <div id="quiz">
@@ -47,11 +55,11 @@ export default function Quiz() {
                 ))}
             </div>
             <div className="btns">
-                <Button type="primary" onClick={()=>{
+                <Button type="primary" onClick={() => {
                     handleFetchQuizes();
                     setSelectedAnswers({});
                 }} loading={quizesLoading}>
-                    {quizesLoading ? "": "Other Quiz"}
+                    {quizesLoading ? "" : "Other Quiz"}
                 </Button>
                 <Button type="primary" 
                     onClick={handleSubmitQuizes} 
@@ -60,6 +68,30 @@ export default function Quiz() {
                     Check
                 </Button>
             </div>
+
+            <Modal
+                open={showScoreModal}
+                onCancel={() => handleModalClose()}
+                footer={null}
+                className="score-modal"
+            >
+                <div className="modal-content">
+                    <div className="score-icon">
+                        <MdOutlineQuiz />
+                    </div>
+                    <h3>Quiz Results</h3>
+                    <div className="score-display">
+                        {score}<span>/{quizes.length}</span>
+                    </div>
+                    <Button 
+                        type="primary" 
+                        onClick={() => handleModalClose()}
+                        className="modal-close-btn"
+                    >
+                        OK
+                    </Button>
+                </div>
+            </Modal>
         </div>
     );
 }

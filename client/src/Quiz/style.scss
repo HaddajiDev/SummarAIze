@@ -1,75 +1,190 @@
-#quiz{
-    height: calc(100vh - 94px);
-    border-radius: 4px 0 0 4px;
-    border: 2px solid #7065ef;
-    position: relative;
-    .title{
-        margin: 0;
-        padding: 15px;
-        font-size: 16px;
-        text-align: center;
-        background: #7065ef;
-        text-transform: capitalize;
-        border-bottom: 1px solid #EEE;
-        color: #FFF;
-        svg{
-            position: relative;
-            top: 3px;
-            font-size: 18px;
-        }
+@use "sass:color";
+
+$primary-color: #7065ef;
+$secondary-color: #0d133a;
+$background-light: #ffffff;
+$spacing-unit: 1rem;
+$border-radius: 8px;
+
+#quiz {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 94px);
+  border-radius: $border-radius 0 0 $border-radius;
+  border: 2px solid $primary-color;
+  background: $background-light;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+
+  .title {
+    margin: 0;
+    padding: 15px;
+    font-size: 16px;
+    text-align: center;
+    background: #7065ef;
+    text-transform: capitalize;
+    border-bottom: 1px solid #EEE;
+    color: #FFF;
+    svg{
+        position: relative;
+        top: 3px;
+        font-size: 18px;
     }
-    .quiz_content{
-        padding: 15px;
-        height: calc(100% - 145px);
-        overflow-y: auto;
-        &::-webkit-scrollbar {
-            width: 5px;
-        }
-        &::-webkit-scrollbar-track {
-            background: #ffffff3a;
-        }
-        &::-webkit-scrollbar-thumb {
-            background-color: #7165efea;
-            border-radius: 15px;
-        }
-        .qz{
-            margin-bottom: 15px;
-            h2{
-                margin: 0;
-                font-size: 14px;
-            }
-            p{
-                margin: 0;
-                font-weight: 600;
-                font-size: 14px;
-                margin-top: 5px;
-                margin-bottom: 2px;
-                color: #0d133a;
-            }
-            .ant-radio-group{
-                display: flex;
-                flex-wrap: wrap;
-                label{
-                    font-size: 13px;
-                    width: 100%;
-                    .ant-radio-label{
-                        *{
-                            font-size: 12px;
-                        }
-                    }
-                }
-            }
-        }
+  }
+
+  .quiz_content {
+    flex: 1;
+    padding: $spacing-unit;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+
+    &::-webkit-scrollbar {
+      width: 6px;
     }
-    .btns{
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
+
+    &::-webkit-scrollbar-track {
+      background: rgba($primary-color, 0.1);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba($primary-color, 0.5);
+      border-radius: $border-radius;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: $primary-color;
+      }
+    }
+
+    .qz {
+      margin-bottom: $spacing-unit * 1.5;
+      padding: $spacing-unit;
+      background: rgba($primary-color, 0.05);
+      border-radius: $border-radius;
+      transition: transform 0.2s ease;
+
+      &:hover {
+        transform: translateX(4px);
+      }
+
+      h2 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1rem;
+        color: $secondary-color;
+        font-weight: 600;
+      }
+
+      p {
+        margin: 0 0 1rem 0;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        color: color.adjust($secondary-color, $lightness: 10%);
+      }
+
+      .ant-radio-group {
         display: flex;
-        padding: 15px 0 15px 0;
-        gap: 5px;
-        justify-content: center;
-        border-top: 1px solid #7065ef4f;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        label {
+          padding: 0.75rem;
+          border: 1px solid rgba($primary-color, 0.2);
+          border-radius: $border-radius;
+          transition: all 0.2s ease;
+          font-size: 0.9rem;
+
+          &:hover {
+            border-color: $primary-color;
+            background: rgba($primary-color, 0.05);
+          }
+
+          &.ant-radio-wrapper-checked {
+            border-color: $primary-color;
+            background: rgba($primary-color, 0.1);
+          }
+        }
+      }
+    }
+  }
+
+  .btns {
+    display: flex;
+    gap: $spacing-unit;
+    padding: $spacing-unit;
+    background: rgba($primary-color, 0.05);
+    border-top: 2px solid rgba($primary-color, 0.1);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+
+    button {
+      flex: 1;
+      max-width: 200px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+
+      &:hover {
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+
+.score-modal {
+    .ant-modal-content {
+        background: $background-light;
+        border: 2px solid $primary-color;
+        border-radius: $border-radius;
+        padding: $spacing-unit;
+    }
+
+    .ant-modal-close {
+        color: $secondary-color;
+        
+        &:hover {
+            color: $primary-color;
+        }
+    }
+
+    .modal-content {
+        text-align: center;
+        
+        .score-icon {
+            font-size: 2.5rem;
+            color: $primary-color;
+            margin-bottom: $spacing-unit;
+        }
+
+        h3 {
+            color: $secondary-color;
+            margin-bottom: $spacing-unit * 1.5;
+            font-size: 1.5rem;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: 700;
+            color: $primary-color;
+            margin-bottom: $spacing-unit * 2;
+            
+            span {
+                font-size: 1.5rem;
+                color: color.adjust($secondary-color, $lightness: 10%);
+                font-weight: 500;
+            }
+        }
+
+        .modal-close-btn {
+            background: $primary-color;
+            border-color: $primary-color;
+            padding: 0 $spacing-unit * 2;
+            height: 40px;
+            font-weight: 600;
+            
+            &:hover {
+                background: color.adjust($primary-color, $lightness: -10%);
+                border-color: color.adjust($primary-color, $lightness: -10%);
+                transform: translateY(-2px);
+            }
+        }
     }
 }
