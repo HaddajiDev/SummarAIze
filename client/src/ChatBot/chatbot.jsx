@@ -36,11 +36,8 @@ export default function ChatBot() {
         setMessage("");
         try {
             let botResponse;
-            if(selectedText){
-                botResponse = await sendChat(`Give me an answer directly without any introductory text for the question "${message}" for the selected text from PDF: "${selectedText}"`);
-            } else {
-                botResponse = await sendChat(message);
-            }
+            botResponse = await sendChat({selected: selectedText, prompt: message});
+
             AddChat({ sender: "bot", content: botResponse });
         } catch (error) {
             console.error("Failed to send message:", error);

@@ -52,7 +52,7 @@ module.exports = (db, bucket) => {
             
             uploadStream.end(req.file.buffer);
             
-            const summary = await generateSummary(text, req, 0);
+            const summary = await generateSummary({selected: null, prompt: text}, req, 0);
             console.log();
             
             res.status(200).json({
@@ -144,14 +144,35 @@ async function generateSummary(text, req, state) {
     try {
         if (!req.session.chatHistory) {
             req.session.chatHistory = [];
-            const systemMessage = {
-                role: "system",
-                content: state === 0 ? process.env.SUMMARY_PROMPT : process.env.HELP_PROMPT
-            };
+            let systemMessage = {};
+            
+            if(!text.selected){                
+                systemMessage = {
+                    role: "system",
+                    content: state === 0 ? process.env.SUMMARY_PROMPT : process.env.HELP_PROMPT
+                };
+            }
+            else
+            {
+                systemMessage = {
+                    role: "system",
+                    content: process.env.HELP_PROMPT + `Give me an answer directly without any introductory text for the question "${text.prompt}" for the selected text from PDF: "${text.selected}"`
+                };
+            }
+            
             req.session.chatHistory.push(systemMessage);
+        }        
+
+        let userMessage = {}
+        
+        if(state === 1){
+            userMessage = { role: "user", content: text.prompt, selected: text.selected ? text.selected : "" };
+        }
+        else
+        {
+            
         }
 
-        const userMessage = { role: "user", content: text };
         req.session.chatHistory.push(userMessage);
 
         const completion = await openai.chat.completions.create({
