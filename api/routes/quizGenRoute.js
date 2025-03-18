@@ -16,7 +16,9 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Text parameter is required' });
     }
 
-    const prompt = `
+    const prompt = `Text: ${text}`;
+
+    const system_prompt = `
       Generate a quiz based on the following text. Follow these requirements:
       - Create 5 multiple-choice questions
       - Each question should have 4 options
@@ -29,16 +31,13 @@ router.post('/', async (req, res) => {
           "question": "question text",
           "options": ["option1", "option2", "option3", "option4"],
           "answer": correct_option_index
-        }]
-
-      Text: ${text}
+        }]      
     `;
 
     const response = await openrouter.chat.completions.create({
       model: "google/gemini-2.0-flash-lite-preview-02-05:free",
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.7,
-      response_format: { type: "json_object" }
+      messages: [{role: 'system', content: system_prompt},{ role: 'user', content: prompt }],
+      response_format: { type: "json_object" },      
     });
 
     const quizJson = response.choices[0].message.content;

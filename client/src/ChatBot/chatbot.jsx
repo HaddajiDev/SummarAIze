@@ -27,25 +27,25 @@ export default function ChatBot() {
 
     const handleSend = async () => {
         if (!message.trim()) return;
+        const currentSelectedText = selectedText;
+        
         AddChat({
             sender: "user",
             content: message,
-            selectedText: selectedText ? selectedText : null
+            selectedText: currentSelectedText ? currentSelectedText : null
         });
-        setSelectedText(null);
+        
         setMessage("");
+        setSelectedText(null);
+        
         try {
-            let botResponse;
-            if(selectedText){
-                botResponse = await sendChat(`Give me an answer directly without any introductory text for the question "${message}" for the selected text from PDF: "${selectedText}"`);
-            } else {
-                botResponse = await sendChat(message);
-            }
+            const botResponse = await sendChat({ selected: currentSelectedText, prompt: message });
             AddChat({ sender: "bot", content: botResponse });
         } catch (error) {
             console.error("Failed to send message:", error);
         }
     };
+    
 
     return (
         <div id="chatbot">

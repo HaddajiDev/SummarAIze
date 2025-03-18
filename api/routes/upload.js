@@ -52,7 +52,7 @@ module.exports = (db, bucket) => {
             
             uploadStream.end(req.file.buffer);
             
-            const summary = await generateSummary(text, req, 0);
+            const summary = await generateSummary({selected: null, prompt: text}, req, 0);
             console.log();
             
             res.status(200).json({
@@ -146,21 +146,39 @@ async function generateSummary(text, req, state) {
             req.session.chatHistory = [];
             const systemMessage = {
                 role: "system",
-                content: state === 0 ? process.env.SUMMARY_PROMPT : process.env.HELP_PROMPT
+                content: state === 0 
+                    ? process.env.SUMMARY_PROMPT 
+                    : process.env.HELP_PROMPT
             };
             req.session.chatHistory.push(systemMessage);
         }
 
-        const userMessage = { role: "user", content: text };
-        req.session.chatHistory.push(userMessage);
+        const messages = [...req.session.chatHistory];
+
+        if (state === 1 && text.selected) {
+            messages.push({
+                role: "user",
+                content: `[SELECTED TEXT CONTEXT]: ${text.selected}`
+            });
+        }
+
+        messages.push({
+            role: "user",
+            content: text.prompt
+        });
 
         const completion = await openai.chat.completions.create({
             model: "google/gemini-2.0-flash-lite-preview-02-05:free",
-            messages: req.session.chatHistory,
+            messages,
         });
 
         const aiResponse = completion.choices[0].message.content;
-        req.session.chatHistory.push({ role: "assistant", content: aiResponse });
+        
+        req.session.chatHistory.push(
+            { role: "user", content: text.prompt },
+            { role: "assistant", content: aiResponse }
+        );
+        
         await req.session.save();
 
         return aiResponse;
@@ -170,7 +188,6 @@ async function generateSummary(text, req, state) {
     }
 }
 
-// Upload To Cloudinary
 async function uploadToCloudinary(file){
     return new Promise((resolve, reject) => {
         let stream = cloudinary.uploader.upload_stream(
