@@ -23,6 +23,7 @@ router.post('/', async (req, res) => {
       - Indicate the correct answer with an index (0-3)
       - Format the response as a valid JSON array only
       - No additional text or explanation
+      - Ensure the answer is in the same language as the provided text. (For example, if the text is in English, the answer must be in English).
       - Use this structure:
         [{
           "question": "question text",

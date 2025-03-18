@@ -52,6 +52,11 @@
                 label{
                     font-size: 13px;
                     width: 100%;
+                    .ant-radio-label{
+                        *{
+                            font-size: 12px;
+                        }
+                    }
                 }
             }
         }

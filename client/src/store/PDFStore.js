@@ -11,6 +11,7 @@ const usePDFStore = create((set,get)=>({
     resourcesLoading: false,
     quizes: [],
     quizesLoading: false,
+    selectedText: null,
 
     setPDFURL: (url) => set({pdfUrl:url}),
 
@@ -38,6 +39,10 @@ const usePDFStore = create((set,get)=>({
         }
     },
 
+    setSelectedText: (text) => {
+        set({selectedText:text});
+    },
+
     sendChat: async(prompt) => {
         set({ replayLoading: true });
         try {
@@ -51,7 +56,7 @@ const usePDFStore = create((set,get)=>({
     },
     
     AddChat: (message) => {
-        set({ chat: [...get().chat, message]})
+        set({ chat: [...get().chat, message]});
     },
     
     fetchresource: async () => {

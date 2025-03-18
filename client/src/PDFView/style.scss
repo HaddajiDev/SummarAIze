@@ -7,5 +7,18 @@
         box-shadow: 0 0 5px 4px #7065ef33;
         border-radius: 4px;
         overflow: hidden;
+        .askAI{
+            position: absolute;
+            border: 1px solid #7065ef;
+            background: #7065eff7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 2px;
+            color: #FFF;
+            padding: 0px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
     }
 }

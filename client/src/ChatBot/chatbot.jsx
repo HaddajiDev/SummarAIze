@@ -7,9 +7,13 @@ import usePDFStore from "../store/PDFStore";
 import ReactMarkdown from "react-markdown";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import Bot from "../assets/Chat bot-pana.svg";
+import { IoArrowRedoSharp } from "react-icons/io5";
+
 
 export default function ChatBot() {
     const chats = usePDFStore(state => state.chat);
+    const selectedText = usePDFStore(state => state.selectedText);
+    const setSelectedText = usePDFStore(state => state.setSelectedText);
     const chatRef = useRef(null);
     const [message, setMessage] = useState("");
     const { sendChat, AddChat, replayLoading } = usePDFStore();
@@ -23,10 +27,20 @@ export default function ChatBot() {
 
     const handleSend = async () => {
         if (!message.trim()) return;
-        AddChat({ sender: "user", content: message });
+        AddChat({
+            sender: "user",
+            content: message,
+            selectedText: selectedText ? selectedText : null
+        });
+        setSelectedText(null);
         setMessage("");
         try {
-            const botResponse = await sendChat(message);
+            let botResponse;
+            if(selectedText){
+                botResponse = await sendChat(`Give me an answer directly without any introductory text for the question "${message}" for the selected text from PDF: "${selectedText}"`);
+            } else {
+                botResponse = await sendChat(message);
+            }
             AddChat({ sender: "bot", content: botResponse });
         } catch (error) {
             console.error("Failed to send message:", error);
@@ -46,7 +60,12 @@ export default function ChatBot() {
                             </div>
                         ) : (
                             <div className="user">
-                                <div className="cont">{chat.content}</div>
+                                <div className="cont">
+                                    {chat.selectedText && (
+                                        <p><IoArrowRedoSharp /> {chat.selectedText}</p>
+                                    )}
+                                    {chat.content}
+                                </div>
                             </div>
                         )}
                     </div>
@@ -70,6 +89,11 @@ export default function ChatBot() {
                 )}
             </div>
             <div className="chatInput">
+                {selectedText && (
+                    <div className="selectedText">
+                        <p><IoArrowRedoSharp /> {selectedText}</p>
+                    </div>
+                )}
                 <Input 
                     placeholder="Ask here" 
                     value={message}

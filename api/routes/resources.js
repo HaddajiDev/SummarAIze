@@ -27,7 +27,9 @@ router.post('/', async (req, res) => {
       - **"type"**: ("article", "book")
       - **"title"**: (The title of the resource)
       - **"link"**: (The direct URL to the resource)
-    
+
+      Please i prefer the resources are in the same language as the summary provided.
+
       **Do not** add any explanations or extra text—only return the JSON array.
     `;
     messages.push({ role: 'system', content: prompt })

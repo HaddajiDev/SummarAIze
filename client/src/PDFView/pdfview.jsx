@@ -2,12 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import "./style.scss"
 import WebViewer from '@pdftron/webviewer';
 import usePDFStore from "../store/PDFStore";
+import { BsRobot } from "react-icons/bs";
 
 
 export default function PDFView() {
     const viewerRef = useRef(null);
     const pdfUrl = usePDFStore((state)=>state.pdfUrl);
-    const [popup, setPopup] = useState({ show: false, x: 0, y: 0, text: "" });
+    const instanceRef = useRef(null);
+    const setSelectedText = usePDFStore((state)=>state.setSelectedText);
+    const [popup, setPopup] = useState({ show: false, x: 0, y: 0});
+    const [selectedTextState, setSelectedTextState] = useState(null);
 
     useEffect(() => {
         WebViewer({
@@ -17,58 +21,104 @@ export default function PDFView() {
             isReadOnly: true,
             licenseKey: 'demo:1741964115564:615810ee03000000004151de0f7af66a8c25176023784464465fdc7265',
         }, viewerRef.current)
-        // .then((instance) => {
-        //     const docViewer = instance.Core.documentViewer; // Use Core API
+        .then((instance) => {
+            instanceRef.current = instance.Core;
+            const { documentViewer, Tools } = instance.Core;
 
-        //     docViewer.addEventListener("documentLoaded", () => {
-        //         const textSelectTool = docViewer.getTool(instance.Core.Tools.ToolNames.TEXT_SELECT);
+            const tool = documentViewer.getTool(Tools.ToolNames.TEXT_SELECT);
+            // tool.addEventListener("selectionComplete", async(_, allQuads) => {
+            //     let selectedText = "";
+            //     let firstQuad = null;
 
-        //         if (!textSelectTool) {
-        //             console.error("Text selection tool not found.");
-        //             return;
-        //         }
+            //     Object.keys(allQuads).forEach((pageNum) => {
+            //         // console.log("pageNum",pageNum);
+            //         const text = documentViewer.getSelectedText(pageNum);
+            //         selectedText += text;
+            //         if (!firstQuad && allQuads[pageNum].length > 0) {
+            //             firstQuad = allQuads[pageNum][0];
+            //             // console.log(pageNum, allQuads[pageNum][0]);
+            //         }
+            //     });
 
-        //         textSelectTool.addEventListener("textSelected", (selectedText, quads) => {
-        //             if (selectedText && quads.length > 0) {
-        //                 const pageNumber = quads[0].pageNumber;
-        //                 const { x1, y1 } = quads[0];
+            //     // console.log("allQuads ",allQuads);
+            //     console.log("firstQuad ",firstQuad);
+            //     // console.log(selectedText);
+            //     setSelectedText(selectedText);
 
-        //                 // Convert page coordinates to viewer coordinates
-        //                 const { x, y } = docViewer.getDocument().getViewerCoordinates(pageNumber, { x: x1, y: y1 });
+            //     if (selectedText&&firstQuad) {
+            //         // console.log("this1");
+            //         // const pageNumber = documentViewer.getCurrentPage();
+            //         // console.log("pageNumber",pageNumber);
+            //         // const displayModeManager = documentViewer.getDisplayModeManager();
+            //         // const screenCoords = displayModeManager.convertPagePointToScreenPoint(
+            //         //     firstQuad.x1,
+            //         //     firstQuad.y1,
+            //         //     pageNumber
+            //         // );
+            //         // console.log("pageCoordinates",screenCoords);
+            //         setPopup({
+            //             show: true,
+            //             x: firstQuad.x1 + 10,
+            //             y: firstQuad.y1 - 20,
+            //         });
+            //     } else {
+            //         // console.log("this2");
+            //         setPopup({ show: false, x: 0, y: 0});
+            //     }
+            // });
+            tool.addEventListener("selectionComplete", (_, allQuads) => {
+                let selectedText = "";
+                let firstQuad = null;
 
-        //                 setPopup({
-        //                     show: true,
-        //                     x: x,
-        //                     y: y - 40, // Adjust position
-        //                     text: selectedText,
-        //                 });
-        //             }
-        //         });
-        //     });
-        // }).catch((error) => console.error("PDFTron failed to initialize:", error));
+                Object.keys(allQuads).forEach((pageNum) => {
+                    const text = documentViewer.getSelectedText(pageNum);
+                    selectedText += text;
+                    if (!firstQuad && allQuads[pageNum].length > 0) {
+                        firstQuad = allQuads[pageNum][0];
+                    }
+                });
+
+                if (selectedText && firstQuad) {
+                    // setSelectedText(selectedText);
+                    setSelectedTextState(selectedText);
+                    setPopup({
+                        show: true,
+                        x: firstQuad.x1 + 10,
+                        y: firstQuad.y1 - 20,
+                    });
+                } else {
+                    // setSelectedText(null);
+                    setSelectedTextState(null);
+                    setPopup({ show: false, x: 0, y: 0 });
+                }
+            });
+            documentViewer.addEventListener('mouseLeftUp', () => {
+                const selectedText = documentViewer.getSelectedText();
+                if (!selectedText) {
+                    setPopup({ show: false, x: 0, y: 0 });
+                    // setSelectedText(null);
+                }
+            });
+
+        });
     }, [pdfUrl]);
+
+    const handleSelectedText = () => {
+        if(selectedTextState){
+            setSelectedText(selectedTextState);
+        }
+        const { documentViewer } = instanceRef.current;
+        documentViewer.clearSelection();
+        setPopup({ show: false, x: 0, y: 0 });
+    }
 
     return(
         <div id="pdf-view">
-            
             <div className="content">
                 <div className="webviewer" ref={viewerRef} style={{ height: '100%' }}></div>
                 {popup.show && (
-                    <div
-                    style={{
-                        position: "absolute",
-                        top: popup.y,
-                        left: popup.x,
-                        background: "white",
-                        padding: "8px",
-                        boxShadow: "0px 0px 5px rgba(0,0,0,0.3)",
-                        borderRadius: "5px",
-                        zIndex: 1000,
-                    }}
-                    >
-                    <p>Selected Text: {popup.text}</p>
-                    <button onClick={() => alert(popup.text)}>Copy</button>
-                    <button onClick={() => setPopup({ ...popup, show: false })}>Close</button>
+                    <div className="askAI" style={{ left: popup.x+80, top: popup.y-30 }} onClick={handleSelectedText}>
+                        Ask AI
                     </div>
                 )}
             </div>

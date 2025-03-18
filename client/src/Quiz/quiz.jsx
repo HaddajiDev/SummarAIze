@@ -3,6 +3,7 @@ import { MdOutlineQuiz } from "react-icons/md";
 import { Button, Radio, Spin } from 'antd';
 import { useState } from "react";
 import usePDFStore from "../store/PDFStore";
+import ReactMarkdown from "react-markdown";
 
 export default function Quiz() {
     const { handleFetchQuizes, quizes, quizesLoading } = usePDFStore();
@@ -38,7 +39,7 @@ export default function Quiz() {
                         >
                             {quiz.options.map((option, optionIndex) => (
                                 <Radio key={optionIndex} value={optionIndex}>
-                                    {option}
+                                    <ReactMarkdown>{option}</ReactMarkdown>
                                 </Radio>
                             ))}
                         </Radio.Group>
