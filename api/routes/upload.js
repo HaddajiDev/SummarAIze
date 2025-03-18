@@ -144,44 +144,41 @@ async function generateSummary(text, req, state) {
     try {
         if (!req.session.chatHistory) {
             req.session.chatHistory = [];
-            let systemMessage = {};
-            
-            if(!text.selected){                
-                systemMessage = {
-                    role: "system",
-                    content: state === 0 ? process.env.SUMMARY_PROMPT : process.env.HELP_PROMPT
-                };
-            }
-            else
-            {
-                systemMessage = {
-                    role: "system",
-                    content: process.env.HELP_PROMPT + `Give me an answer directly without any introductory text for the question "${text.prompt}" for the selected text from PDF: "${text.selected}"`
-                };
-            }
-            
+            const systemMessage = {
+                role: "system",
+                content: state === 0 
+                    ? process.env.SUMMARY_PROMPT 
+                    : process.env.HELP_PROMPT
+            };
             req.session.chatHistory.push(systemMessage);
-        }        
-
-        let userMessage = {}
-        
-        if(state === 1){
-            userMessage = { role: "user", content: text.prompt, selected: text.selected ? text.selected : "" };
-        }
-        else
-        {
-            
         }
 
-        req.session.chatHistory.push(userMessage);
+        const messages = [...req.session.chatHistory];
+
+        if (state === 1 && text.selected) {
+            messages.push({
+                role: "user",
+                content: `[SELECTED TEXT CONTEXT]: ${text.selected}`
+            });
+        }
+
+        messages.push({
+            role: "user",
+            content: text.prompt
+        });
 
         const completion = await openai.chat.completions.create({
             model: "google/gemini-2.0-flash-lite-preview-02-05:free",
-            messages: req.session.chatHistory,
+            messages,
         });
 
         const aiResponse = completion.choices[0].message.content;
-        req.session.chatHistory.push({ role: "assistant", content: aiResponse });
+        
+        req.session.chatHistory.push(
+            { role: "user", content: text.prompt },
+            { role: "assistant", content: aiResponse }
+        );
+        
         await req.session.save();
 
         return aiResponse;
@@ -191,7 +188,6 @@ async function generateSummary(text, req, state) {
     }
 }
 
-// Upload To Cloudinary
 async function uploadToCloudinary(file){
     return new Promise((resolve, reject) => {
         let stream = cloudinary.uploader.upload_stream(
