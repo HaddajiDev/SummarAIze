@@ -8,6 +8,7 @@ import ReactMarkdown from "react-markdown";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import Bot from "../assets/Chat bot-pana.svg";
 import { IoArrowRedoSharp } from "react-icons/io5";
+import { IoCloseSharp } from "react-icons/io5";
 
 
 export default function ChatBot() {
@@ -45,7 +46,6 @@ export default function ChatBot() {
             console.error("Failed to send message:", error);
         }
     };
-    
 
     return (
         <div id="chatbot">
@@ -91,6 +91,7 @@ export default function ChatBot() {
             <div className="chatInput">
                 {selectedText && (
                     <div className="selectedText">
+                        <button onClick={()=>setSelectedText(null)}><IoCloseSharp /></button>
                         <p><IoArrowRedoSharp /> {selectedText}</p>
                     </div>
                 )}

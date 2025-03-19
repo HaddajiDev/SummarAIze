@@ -16,8 +16,8 @@ export default function PDFView() {
     useEffect(() => {
         WebViewer({
             path: '/webview',
-            initialDoc: pdfUrl,
-            // initialDoc: 'https://res.cloudinary.com/db0guoc9m/image/upload/v1742256878/a8m72fwwtrsx8frllzld.pdf',
+            // initialDoc: pdfUrl,
+            initialDoc: 'https://res.cloudinary.com/db0guoc9m/image/upload/v1742256878/a8m72fwwtrsx8frllzld.pdf',
             isReadOnly: true,
             licenseKey: 'demo:1741964115564:615810ee03000000004151de0f7af66a8c25176023784464465fdc7265',
         }, viewerRef.current)

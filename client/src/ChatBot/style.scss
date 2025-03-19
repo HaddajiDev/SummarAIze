@@ -138,6 +138,25 @@
             border-radius: 3px;
             width: 80%;
             margin: 0 auto;
+            position: relative;
+            padding-top: 15px;
+            button{
+                border: 0;
+                background: transparent;
+                position: absolute;
+                right: 4px;
+                top: 9px;
+                width: fit-content;
+                height: fit-content;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+                svg{
+                    font-size: 15px;
+                    color: #7065ef;
+                }
+            }
             p{
                 font-weight: 500;
                 font-size: 12px;

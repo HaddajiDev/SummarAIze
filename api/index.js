@@ -3,6 +3,9 @@ const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
 const { GridFSBucket } = require('mongodb');
+const cookieParser = require('cookie-parser');
+
+
 const connect = require('./lib/db');
 
 const PORT = process.env.PORT;
@@ -14,6 +17,7 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+app.use(cookieParser());
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -24,7 +28,7 @@ app.use(session({
 const ChatRoutes = require("./routes/upload");
 app.use("/resources",require("./routes/resources"));
 app.use("/quiz",require("./routes/quizGenRoute"));
-// app.use("/auth", require("./routes/Auth"));
+app.use("/auth", require("./routes/Auth"));
 
 
 (async () => {

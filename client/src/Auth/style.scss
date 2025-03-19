@@ -1,0 +1,291 @@
+.login{
+    width: 400px !important;
+    .ant-modal-title {
+        color: #7065ef;
+        text-align: center;
+        font-size: 30px;
+        font-weight: 700;
+    }
+    .ant-spin{
+        color: #FFF;
+    }
+    .ant-form-vertical .ant-form-item:not(.ant-form-item-horizontal) .ant-form-item-label{
+        padding: 0;
+        
+    }
+    .ant-form-item .ant-form-item-label > label{
+        font-size: 13px;
+        color: #0d133a;
+        font-weight: 600;
+        margin-bottom: 0;
+    }
+    .ant-input-affix-wrapper {
+        height: 40px;
+        border-radius: 4px;
+    }
+    .ant-input-affix-wrapper > input.ant-input{
+        font-size: 13px;
+        color: #0d133a;
+    }
+    .ant-input-affix-wrapper .ant-input-prefix {
+        position: relative;
+        top: -1px;
+    }
+    .ant-form-item {
+        margin-bottom: 15px;
+        &.check{
+            margin-bottom: 0;
+            margin-top: 5px;
+        }
+        &.password{
+            margin: 0;
+        }
+    }
+    .ant-form-item .ant-form-item-label >label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before{
+        display: none;
+    }
+    .ant-form{
+        margin-top: 20px;
+    }
+    .ant-input-outlined:hover {
+        border-color: #7065ef;
+    }
+    .ant-input-outlined:focus,.ant-input-outlined:focus-within {
+        border-color: #7065ef;
+        box-shadow: 0 0 0 2px #7165ef2e;
+    }
+    .ant-btn-variant-outlined:not(:disabled):not(.ant-btn-disabled):hover, :where(.css-dev-only-do-not-override-nqoqt9).ant-btn-variant-dashed:not(:disabled):not(.ant-btn-disabled):hover {
+        color: #FFF;
+        border-color: #7065ef;
+        background: #7065ef;
+    }
+    .ant-btn.ant-btn-block{
+        font-weight: 700;
+        font-size: 13px;
+        border-radius: 4px;
+        border: 1px solid #d6d5df;
+        background: rgb(112, 101, 239);
+        color: #FFF;
+        padding: 0;
+        height: 42px;
+        line-height: 2;
+        transition: all 0.2s;
+        width: 100%;
+        margin-top: 20px;
+        box-shadow: none;
+    }
+    .ant-checkbox-wrapper {
+        font-weight: 500;
+        user-select: none;
+        font-size: 13px;
+    }
+    .ant-checkbox-checked .ant-checkbox-inner {
+        background-color: #7065ef;
+        border-color: #7065ef;
+    }
+    .ant-checkbox-checked:hover .ant-checkbox-inner {
+        background-color: #7065ef;
+    }
+    .ant-checkbox-wrapper:not(.ant-checkbox-wrapper-disabled):hover .ant-checkbox-checked:not(.ant-checkbox-disabled) .ant-checkbox-inner {
+        background-color: #7065ef;
+        border-color: transparent;
+    }
+    .ant-checkbox-wrapper:not(.ant-checkbox-wrapper-disabled):hover .ant-checkbox-inner, :where(.css-dev-only-do-not-override-nqoqt9).ant-checkbox:not(.ant-checkbox-disabled):hover .ant-checkbox-inner {
+        border-color: #7065ef;
+    }
+    .ant-checkbox+span {
+        padding-inline-start: 3px;
+        padding-inline-end: 0;
+        font-weight: 600;
+        position: relative;
+        top: 2px;
+    }
+    .lnk{
+        font-weight: 500;
+        margin-top: 0;
+        margin-bottom: 0;
+        text-align: center;
+        color: #0d133a;
+        font-size: 13px;
+        a{
+            text-decoration: underline;
+            color: #7065ef;
+            margin-left: 2px;
+        }
+    }
+    .lnkP{
+        text-decoration: underline;
+        color: #7065ef;
+        margin-left: 2px;
+        float: right;
+        margin-top: 3px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+}
+.signup{
+    width: 400px !important;
+    .ant-modal-title {
+        color: #7065ef;
+        text-align: center;
+        font-size: 30px;
+        font-weight: 700;
+    }
+    .ant-form-vertical .ant-form-item:not(.ant-form-item-horizontal) .ant-form-item-label{
+        padding: 0;
+        
+    }
+    .ant-form-item .ant-form-item-label > label{
+        font-size: 12px;
+        color: #0d133a;
+        font-weight: 600;
+        margin-bottom: 0;
+    }
+    .ant-input-affix-wrapper {
+        height: 40px;
+        border-radius: 4px;
+    }
+    .ant-input-affix-wrapper > input.ant-input{
+        font-size: 13px;
+        color: #0d133a;
+    }
+    .ant-input-affix-wrapper .ant-input-prefix {
+        position: relative;
+        top: -1px;
+    }
+    .ant-form-item {
+        margin-bottom: 15px;
+        &.lst{
+            margin-bottom: 5px;
+        }
+    }
+    .ant-form-item .ant-form-item-label >label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before{
+        display: none;
+    }
+    .ant-form{
+        margin-top: 20px;
+    }
+    .ant-input-outlined:hover {
+        border-color: #7065ef;
+    }
+    .ant-input-outlined:focus,.ant-input-outlined:focus-within {
+        border-color: #7065ef;
+        box-shadow: 0 0 0 2px #7165ef2e;
+    }
+    .ant-btn-variant-outlined:not(:disabled):not(.ant-btn-disabled):hover, :where(.css-dev-only-do-not-override-nqoqt9).ant-btn-variant-dashed:not(:disabled):not(.ant-btn-disabled):hover {
+        color: #FFF;
+        border-color: #7065ef;
+        background: #7065ef;
+    }
+    .ant-btn.ant-btn-block{
+        font-weight: 700;
+        font-size: 13px;
+        border-radius: 4px;
+        border: 1px solid #d6d5df;
+        background: rgb(112, 101, 239);
+        color: #FFF;
+        padding: 0;
+        height: 42px;
+        line-height: 2;
+        transition: all 0.2s;
+        width: 100%;
+        margin-top: 20px;
+        box-shadow: none;
+    }
+    .ant-checkbox-wrapper {
+        font-weight: 500;
+        user-select: none;
+        font-size: 13px;
+    }
+    .ant-checkbox-checked .ant-checkbox-inner {
+        background-color: #7065ef;
+        border-color: #7065ef;
+    }
+    .ant-checkbox-checked:hover .ant-checkbox-inner {
+        background-color: #7065ef;
+    }
+    .ant-checkbox-wrapper:not(.ant-checkbox-wrapper-disabled):hover .ant-checkbox-checked:not(.ant-checkbox-disabled) .ant-checkbox-inner {
+        background-color: #7065ef;
+        border-color: transparent;
+    }
+    .ant-checkbox-wrapper:not(.ant-checkbox-wrapper-disabled):hover .ant-checkbox-inner, :where(.css-dev-only-do-not-override-nqoqt9).ant-checkbox:not(.ant-checkbox-disabled):hover .ant-checkbox-inner {
+        border-color: #7065ef;
+    }
+    .ant-checkbox+span {
+        padding-inline-start: 3px;
+        padding-inline-end: 0;
+        font-weight: 600;
+        position: relative;
+        top: 1px;
+    }
+    .lnk{
+        font-weight: 500;
+        margin-top: 0;
+        margin-bottom: 0;
+        text-align: center;
+        color: #0d133a;
+        font-size: 13px;
+        a{
+            text-decoration: underline;
+            color: #7065ef;
+            margin-left: 2px;
+        }
+    }
+    .ant-checkbox-wrapper span{
+        color: #0d133a;
+    }
+    .ant-spin{
+        color: #FFF;
+    }
+}
+.forgot-password{
+    max-width: 450px;
+    background-color: #FFF;
+    margin: 0 auto;
+    margin-top: 70px;
+    border-radius: 5px;
+    border: 2px solid rgba(112, 101, 239, 0.12);
+    overflow: hidden;
+    padding: 30px;
+    h3 {
+        color: #7065ef;
+        text-align: center;
+        font-size: 27px;
+        font-weight: 700;
+        margin: 10px 0 15px 0;
+        display: block;
+    }
+    p{
+        text-align: center;
+        font-weight: 400;
+        font-size: 15px;
+        color: #686868;
+        margin-bottom: 30px;
+    }
+    form{
+        .ant-form-item-label{
+            padding: 0;
+            padding-bottom: 3px !important;
+        }
+        .ant-form-item .ant-form-item-label > label{
+            font-size: 13px;
+            color: #0d133a;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+        button{
+            margin-top: 20px;
+        }
+        .ant-form-item{
+            // margin-bottom: 15px;
+        }
+        .otp{
+            .ant-form-item-label{
+                text-align: center !important;
+            }
+        }
+    }
+    .ant-spin-spinning{
+        color: #FFF;
+    }
+}
