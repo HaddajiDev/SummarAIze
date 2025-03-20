@@ -56,9 +56,20 @@ const useAuthStore = create((set,get)=>({
         try {
             const res = await instanceAxios.get('/auth/user');
             set({ user: res.data.user });
-            console.log(res.data.user);
+            // console.log(res.data.user);
         } catch (err) {
             console.log("getUser error", err);
+        }
+    },
+    changePlan: async (plan) => {
+        try {
+            const res = await instanceAxios.put('/auth/plan', { plan, userId: get().user.id });
+            // console.log(res);
+            message.success("Plan updated successfully");
+            get().checkAuth();
+        } catch (err) {
+            console.log("changePlan error", err);
+            message.error(err.response?.data?.message || "Something went wrong");
         }
     }
 }));

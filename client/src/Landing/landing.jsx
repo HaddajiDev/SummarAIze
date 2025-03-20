@@ -119,19 +119,27 @@ export default function Landing() {
                             <h3>Basic Plan</h3>
                             <p>Free</p>
                             <ul>
-                                <li><FaCircleCheck /> Get started for free or unlock</li>
-                                <li><FaCircleCheck /> Get started for free or unlock</li>
-                                <li><FaCircleCheck /> Get started for free or unlock</li>
+                                <li><FaCircleCheck /> Limited Upload (3 PDFs) </li>
+                                <li><FaCircleCheck /> Chat with PDFs </li>
+                                <li><FaCircleCheck /> AI-Powered Summarization (Basic)</li>
+                                <li><FaCircleCheck /> Generate Quizzes</li>
+                                <li><FaCircleCheck /> Extract Key Topics & Resources</li>
+                                <li><FaCircleCheck /> Limited Cloud Storage</li>
                             </ul>
                             <Button onClick={()=>setOpen("register")} type="primary">Get Started</Button>
                         </div>
                         <div className='item'>
                             <h3>Premium Plan</h3>
-                            <p>$10</p>
+                            <p>$10<span>/Month</span></p>
                             <ul>
-                                <li><FaCircleCheck /> Get started for free or unlock</li>
-                                <li><FaCircleCheck /> Get started for free or unlock</li>
-                                <li><FaCircleCheck /> Get started for free or unlock</li>
+                                <li><FaCircleCheck /> Unlimited PDF Uploads</li>
+                                <li><FaCircleCheck /> Chat with PDFs </li>
+                                <li><FaCircleCheck /> Advanced Summarization</li>
+                                <li><FaCircleCheck /> Regenerate Summarization</li>
+                                <li><FaCircleCheck /> Unlimited Quiz Generation</li>
+                                <li><FaCircleCheck /> Full PDF Editing (Merge, Split, Convert & More)</li>
+                                <li><FaCircleCheck /> Priority Processing (Faster AI Responses)</li>
+                                <li><FaCircleCheck /> No Ads & Priority Support</li>
                             </ul>
                             <Button onClick={()=>setOpen("register")} type="primary">Get Started</Button>
                         </div>

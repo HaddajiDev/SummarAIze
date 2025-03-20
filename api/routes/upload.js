@@ -7,6 +7,7 @@ const pdfjs = require('pdfjs-dist');
 const { openai } = require('../lib/ai');
 const cloudinary = require("../lib/cloudinary");
 const streamifier = require("streamifier");
+const User = require('../models/UserModel');
 
 const History = require('../models/chatHistory');
 
@@ -93,6 +94,10 @@ module.exports = (db, bucket) => {
             //     { pdfId: pdfId },
             //     { summary: summary }
             // );
+
+            const user = await User.findById(userId);
+            const currentDocuments = user?.numberOfDocuments || 0;
+            await User.findByIdAndUpdate(userId, { numberOfDocuments: currentDocuments + 1 });
             
             const his = await History.findOneAndUpdate({ pdfId: pdfId }, { summary: summary });
 
@@ -202,6 +207,7 @@ module.exports = (db, bucket) => {
             res.status(500).json({ success: false, error: 'Server error' });
         }
     });
+
     return router;
 };
 

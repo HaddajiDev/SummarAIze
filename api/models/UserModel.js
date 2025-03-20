@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'free'
     },
+    numberOfDocuments: {
+        type: Number,
+        default: 0
+    },
     resetOtp: {
         type: String,
         default: null

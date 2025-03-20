@@ -35,7 +35,7 @@ const usePDFStore = create((set,get)=>({
             set({chat: res.data.chat});
             get().fetchresource(res.data.pdfId);
             get().handleFetchQuizes(res.data.pdfId);
-            console.log(res.data);
+            // console.log(res.data);
         } catch (error) {
             console.error('Upload error:', error);
         } finally {
@@ -77,7 +77,7 @@ const usePDFStore = create((set,get)=>({
             // }));
             // set({resources:results});
             set({resources:result.data});
-            console.log(result);
+            // console.log(result);
         } catch (error) {
             console.error("Error fetching resources:", error);
             return null;
@@ -101,7 +101,7 @@ const usePDFStore = create((set,get)=>({
     getOneHistory: async(pdfId) => {
         try {
             const result = await instanceAxios.get(`/api/history/${pdfId}`);
-            console.log(result.data);
+            // console.log(result.data);
             set({pdfUrl: result.data.history.pdfLink});
             set({summary: result.data.history.summary});
             set({chat: result.data.history.messages});
@@ -113,12 +113,12 @@ const usePDFStore = create((set,get)=>({
             result.data.history.messages.forEach((message, index) => {
                 if (message.content && typeof message.content === 'string' && message.content.includes("[SELECTED TEXT CONTEXT] : ")) {
                     const msg = message.content.split("[SELECTED TEXT CONTEXT] : ")[1];
-                    console.log(msg);
+                    // console.log(msg);
                     selectedTextDB.set(index, msg);
                 }
             });
 
-            console.log(selectedTextDB);
+            // console.log(selectedTextDB);
 
             set({ selectedTextDB });
 

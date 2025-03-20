@@ -27,15 +27,18 @@ export default function Home() {
     const history = useHistoryStore(state => state.history);
     const getHistory = useHistoryStore(state=>state.getHistory);
     const deleteHistory = useHistoryStore(state=>state.deleteHistory);
-    const checkAuth = useHistoryStore(state=>state.checkAuth);
     const navigate = useNavigate();
-    const [showError, setShowError] = useState(false);
+    const [showError, setShowError] = useState(null);
 
     const handleFileChange = async (file) => {
-        setShowError(false);
+        setShowError(null);
+        if(user?.plan === "free" && user?.numberOfDocuments >= 3) {
+            setShowError("You have reached the limit of 3 documents for free plan. Please upgrade to premium plan");
+            return;
+        }
         if (file && file.type === "application/pdf") {
             if(file.size > 2000000 && user.plan === "free") {
-                setShowError(true);
+                setShowError("File size exceeds 2MB limit for free plan. Please upgrade to premium plan");
                 return;
             }
             await uploadPDF(file, user.id);
@@ -55,6 +58,10 @@ export default function Home() {
     }
 
     const handleDeletePDF = async(pdfId) => {
+        if(user?.plan === "free" && user?.numberOfDocuments >= 3) {
+            setShowError("You have reached the limit of 3 documents for free plan. Please upgrade to premium plan");
+            return;
+        }
         await deleteHistory(pdfId);
         getHistory(user.id);
     }
@@ -97,7 +104,7 @@ export default function Home() {
                     </Dropzone>
                     {showError && (
                         <div className="upload-error">
-                            <p className="error">File size exceeds 2MB limit for free plan. Please upgrade to premium plan</p>
+                            <p className="error">{showError}</p>
                             <Button color="primary" variant="dashed">Upgrade now</Button>
                         </div>
                     )}

@@ -9,7 +9,7 @@ const useHistoryStore = create((set,get)=>({
         try {
             const result = await instanceAxios.get(`/api/history?userId=${userId}`);
             set({history: result.data.history});
-            console.log(result.data.history);
+            // console.log(result.data.history);
         } catch (error) {
             console.log("get history error", error);
         }

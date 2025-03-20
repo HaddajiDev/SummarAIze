@@ -20,13 +20,13 @@ export default function ForgotPassword() {
     const handleForgotPassword = async(values) => {
         // First setp actions
         if(otpStatus==="1step"&&values.email&&!loading){
-            console.log(values);
+            // console.log(values);
             setData(values);
             setOtpStatus("2step");
         }
         // Second step actions
         if(otpStatus==="2step"&&values.otp&&!loading){
-            console.log(values);
+            // console.log(values);
             setData({...data,otp:values.otp});
             setOtpStatus("3step");
         }
@@ -48,7 +48,7 @@ export default function ForgotPassword() {
                 setLoading(false);
                 return;
             }
-            console.log(values);
+            // console.log(values);
             setData({...data,password:values.password});
             setData({});
         }

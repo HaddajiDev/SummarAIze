@@ -9,6 +9,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 export default function Nav() {
     const user = useAuthStore(state=>state.user);
     const handleLogout = useAuthStore(state=>state.handleLogout);
+    const changePlan = useAuthStore(state=>state.changePlan);
     const navigate = useNavigate();
     return (
         <nav id="nav2">
@@ -17,14 +18,17 @@ export default function Nav() {
             </div>
             <div className="r-s">
                 <Dropdown 
-                    menu={{ items: [
-                        { key: '1', label: 'Upgrade To Premium Plan', onClick:()=>{} },
-                    ] 
+                    menu={{ items: 
+                        user?.plan =="free" 
+                        ?[{ key: '1', label: 'Upgrade To Premium Plan', onClick:()=>changePlan('premium')}] 
+                        :[{ key: '1', label: 'Cancel Premium Plan', onClick:()=>changePlan('free')}] 
                     }} 
                     placement="bottomRight"
                     arrow
                 >
-                    <p className="plan">Free plan</p>
+                    <p className="plan">
+                        {user?.plan === 'free' ? 'Free Plan' : 'Premium Plan'}
+                    </p>
                 </Dropdown>
                 <div className="pfp">
                     <Dropdown 

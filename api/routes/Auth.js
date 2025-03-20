@@ -56,7 +56,7 @@ router.post('/signup', async (req, res) => {
 
         return res.status(200).json({ 
             message: 'Account created successfully',
-            user: { id: user._id, username: user.username, email: user.email } 
+            user: { id: user._id, username: user.username, email: user.email, plan: user.plan, numberOfDocuments: user.numberOfDocuments }
         });
 
     } catch (error) {
@@ -95,7 +95,7 @@ router.post('/login', async (req, res) => {
 
         return res.status(200).json({ 
             message: 'Login successful', 
-            user: { id: user._id, username: user.username, email: user.email }
+            user: { id: user._id, username: user.username, email: user.email, plan: user.plan, numberOfDocuments: user.numberOfDocuments }
         });
     } catch (error) {
         console.error("❌ Error:", error);
@@ -123,10 +123,21 @@ router.get('/user', authMiddleware, async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
         return res.status(200).json({
-            user: { id: user._id, username: user.username, email: user.email }
+            user: { id: user._id, username: user.username, email: user.email, plan: user.plan, numberOfDocuments: user.numberOfDocuments }
         });
     } catch (error) {
         return res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+// Update Plan
+router.put("/plan", async(req, res) => {
+    try {
+        const {userId, plan} = req.body;
+        console.log(userId, plan);
+        const user = await User.findOneAndUpdate({ _id: userId }, { plan: plan });
+        res.send({message: "Plan updated"});
+    } catch (error) {
+        console.log("Error updating plan", error);
     }
 });
 
