@@ -36,13 +36,13 @@ module.exports = (db, bucket) => {
                 error: 'No PDF file uploaded' 
             });
 
-            const isValidPdf = await validatePDF(req.file.buffer);
-            if (!isValidPdf) {
-                return res.status(400).json({
-                    success: false,
-                    error: 'Invalid PDF file structure'
-                });
-            }
+            // const isValidPdf = await validatePDF(req.file.buffer);
+            // if (!isValidPdf) {
+            //     return res.status(400).json({
+            //         success: false,
+            //         error: 'Invalid PDF file structure'
+            //     });
+            // }
 
             const cloudinaryRes = await uploadToCloudinary(req.file);
 
