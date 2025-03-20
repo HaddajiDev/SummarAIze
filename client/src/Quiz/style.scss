@@ -9,7 +9,7 @@ $border-radius: 8px;
 #quiz {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 94px);
+  height: calc(100vh - 98px);
   border-radius: $border-radius 0 0 $border-radius;
   border: 2px solid $primary-color;
   background: $background-light;
@@ -63,22 +63,30 @@ $border-radius: 8px;
       border-radius: $border-radius;
       transition: transform 0.2s ease;
 
-      &:hover {
-        transform: translateX(4px);
-      }
+      // &:hover {
+      //   transform: translateX(4px);
+      // }
 
       h2 {
-        margin: 0 0 0.5rem 0;
-        font-size: 1rem;
-        color: $secondary-color;
+        margin: 0 0 5px 0;
+        font-size: 16px;
+        color: #0d133a;
         font-weight: 600;
       }
 
       p {
-        margin: 0 0 1rem 0;
-        font-size: 0.9rem;
         line-height: 1.5;
-        color: color.adjust($secondary-color, $lightness: 10%);
+        color: rgb(22.338028169, 32.6478873239, 99.661971831);
+        margin: 0;
+        font-size: 13px;
+        height: fit-content;
+        &:first-of-type{
+          margin-bottom: 10px;
+        }
+      }
+      span p{
+        margin: 0 !important;
+        font-size: 12px;
       }
 
       .ant-radio-group {
@@ -114,10 +122,10 @@ $border-radius: 8px;
     background: rgba($primary-color, 0.05);
     border-top: 2px solid rgba($primary-color, 0.1);
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
-
+    justify-content: center;
     button {
       flex: 1;
-      max-width: 200px;
+      max-width: 150px;
       font-weight: 500;
       transition: all 0.2s ease;
 

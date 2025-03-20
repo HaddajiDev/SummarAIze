@@ -10,46 +10,50 @@ import Resources from "../Resources/resources";
 import Summarize from "../Summarize/Summarize";
 import Quiz from "../Quiz/quiz";
 import { useState } from "react";
+import Nav from "../Nav/nav";
 
 
 
 export default function View() {
     const [option, setOption] = useState("chatbot");
     return(
-        <div id="home">
-            <Splitter>
-                <Splitter.Panel style={{marginRight: "10px"}}>
-                    <PDFView />
-                </Splitter.Panel>
-                <Splitter.Panel defaultSize="40%" min="40%" max="70%">
-                    <div className="r-p">
-                        {option=="chatbot"&&<ChatBot />}
-                        {option=="resources"&&<Resources />}
-                        {option=="summarize"&&<Summarize />}
-                        {option=="quiz"&&<Quiz />}
-                    </div>
-                    <div className="menu">
-                        <div className="items">
-                            <p className={option=="chatbot" ?"active" :""} onClick={() => setOption("chatbot")}>
-                                <BsRobot />
-                                ChatBot
-                            </p>
-                            <p className={option=="resources" ?"active" :""} onClick={() => setOption("resources")}>
-                                <LuTextSearch />
-                                Resources
-                            </p>
-                            <p className={option=="summarize" ?"active" :""} onClick={() => setOption("summarize")}>
-                                <PiFiles />
-                                Summary
-                            </p>
-                            <p className={option=="quiz" ?"active" :""} onClick={() => setOption("quiz")}>
-                                <MdOutlineQuiz />
-                                Quiz
-                            </p>
+        <>
+            <Nav />
+            <div id="view">
+                <Splitter>
+                    <Splitter.Panel style={{marginRight: "10px"}}>
+                        <PDFView />
+                    </Splitter.Panel>
+                    <Splitter.Panel defaultSize="40%" min="40%" max="70%">
+                        <div className="r-p">
+                            {option=="chatbot"&&<ChatBot />}
+                            {option=="resources"&&<Resources />}
+                            {option=="summarize"&&<Summarize />}
+                            {option=="quiz"&&<Quiz />}
                         </div>
-                    </div>
-                </Splitter.Panel>
-            </Splitter>
-        </div>
+                        <div className="menu">
+                            <div className="items">
+                                <p className={option=="chatbot" ?"active" :""} onClick={() => setOption("chatbot")}>
+                                    <BsRobot />
+                                    ChatBot
+                                </p>
+                                <p className={option=="resources" ?"active" :""} onClick={() => setOption("resources")}>
+                                    <LuTextSearch />
+                                    Resources
+                                </p>
+                                <p className={option=="summarize" ?"active" :""} onClick={() => setOption("summarize")}>
+                                    <PiFiles />
+                                    Summary
+                                </p>
+                                <p className={option=="quiz" ?"active" :""} onClick={() => setOption("quiz")}>
+                                    <MdOutlineQuiz />
+                                    Quiz
+                                </p>
+                            </div>
+                        </div>
+                    </Splitter.Panel>
+                </Splitter>
+            </div>
+        </>
     )
 }

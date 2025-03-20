@@ -1,21 +1,43 @@
-import { Button } from "antd"
+import { Button, Dropdown } from "antd"
 import "./style.scss"
 import Login from "../Auth/login"
 import { useState } from "react";
 import Register from "../Auth/register";
+import useAuthStore from "../store/AuthStore";
+import { NavLink, redirect } from "react-router-dom";
 
 export default function Nav() {
-    const [open, setOpen] = useState(null);
+    const user = useAuthStore(state=>state.user);
+    const handleLogout = useAuthStore(state=>state.handleLogout);
     return (
-        <nav id="nav">
+        <nav id="nav2">
             <div className="l-s">
-                <h1>smartPDF</h1>
+                <NavLink to={"/"}>Summar<span>AI</span>ze</NavLink>
             </div>
             <div className="r-s">
-                <Button onClick={()=>setOpen("login")}>Login</Button>
-                <Button onClick={()=>setOpen("register")} type="primary">Register</Button>
-                <Login open={open} setOpen={setOpen} />
-                <Register open={open} setOpen={setOpen} />
+                <Dropdown 
+                    menu={{ items: [
+                        { key: '1', label: 'Upgrade To Premium Plan', onClick:()=>{} },
+                    ] 
+                    }} 
+                    placement="bottomRight"
+                    arrow
+                >
+                    <p className="plan">Free plan</p>
+                </Dropdown>
+                <div className="pfp">
+                    <Dropdown 
+                        menu={{ items: [
+                            { key: '1', label: 'Settings', onClick:()=>{} },
+                            { key: '2', label: 'Logout', onClick:handleLogout }
+                        ] 
+                        }} 
+                        placement="bottomRight"
+                        arrow
+                    >
+                        <img src={`https://api.dicebear.com/9.x/initials/svg?seed=${user?.username}&backgroundColor=7065ef`} />
+                    </Dropdown>
+                </div>
             </div>
         </nav>
     )
