@@ -1,7 +1,7 @@
 const express = require("express");
 const OpenAI = require('openai');
 const router = express.Router();
-
+const History = require('../models/chatHistory');
 
 const openrouter = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
@@ -10,7 +10,7 @@ const openrouter = new OpenAI({
 
 router.post('/', async (req, res) => {
   try {
-    const { text } = req.body;
+    const { text, pdfId } = req.body;
 
     if (!text) {
       return res.status(400).json({ error: 'Text parameter is required' });
@@ -42,6 +42,18 @@ router.post('/', async (req, res) => {
 
     const quizJson = response.choices[0].message.content;
     const quizData = JSON.parse(quizJson);
+
+    const newQuizData = quizData.map(quiz => ({
+      question: quiz.question,
+      options: quiz.options,
+      answer: quiz.answer
+    }));
+
+
+    await History.updateOne(
+      { pdfId },
+      { $set: { quizs: newQuizData } }
+    );
 
     res.json(quizData);
   } catch (error) {

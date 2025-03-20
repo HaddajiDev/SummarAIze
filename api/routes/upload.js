@@ -8,6 +8,8 @@ const { openai } = require('../lib/ai');
 const cloudinary = require("../lib/cloudinary");
 const streamifier = require("streamifier");
 
+const History = require('../models/chatHistory');
+
 const storage = multer.memoryStorage();
 const upload = multer({
     storage,
@@ -22,7 +24,11 @@ const upload = multer({
 });
 
 module.exports = (db, bucket) => {
+    const files_collection = db.collection('uploads.files');
+    const chunks_collection = db.collection('uploads.chunks');  
+
     router.post('/upload', upload.single('file'), async (req, res) => {
+        const userId = req.query.userId;
         try {
             if (!req.file) return res.status(400).json({ 
                 success: false, 
@@ -49,15 +55,50 @@ module.exports = (db, bucket) => {
             const text = await extractPDFText(req.file.buffer);
             
             const uploadStream = bucket.openUploadStream(req.file.originalname);
+            let fileSize = 0;
+            
+            const uploadComplete = new Promise((resolve, reject) => {
+                uploadStream.on('finish', async () => {
+                    const fileDoc = await bucket.find({ _id: uploadStream.id }).next();
+                    fileSize = fileDoc.length;
+                    resolve();
+                });
+                uploadStream.on('error', reject);
+            });
             
             uploadStream.end(req.file.buffer);
             
-            const summary = await generateSummary({selected: null, prompt: text}, req, 0);
-            console.log();
+            await uploadComplete;
             
+            
+            const pdfId = uploadStream.id;
+
+            const newHistory = new History({
+                userId: userId,
+                pdfId,
+                summary: "",
+                pdfLink: cloudinaryRes.secure_url,
+                messages: [],
+                quizs: [],
+                pdfName: uploadStream.filename,
+                pdfSize: `${FormatFileSize(fileSize)}`,
+                resources: []
+            });
+            await newHistory.save();
+            
+            const summary = await generateSummary(text, pdfId);
+            
+            await History.updateOne(
+                { pdfId: pdfId },
+                { 
+                    summary: summary
+                }
+            );
+
             res.status(200).json({
                 summary,
-                url: cloudinaryRes.secure_url
+                url: cloudinaryRes.secure_url,
+                pdfId
             });
 
         } catch (error) {
@@ -70,11 +111,45 @@ module.exports = (db, bucket) => {
     });
 
     router.post('/chat', async(req, res) => {
-        const { prompt } = req.body;
-        
+        const { prompt, pdfId } = req.body;        
         try {
-            const response = await generateSummary(prompt, req, 1);
+            const response = await generateChat(prompt, pdfId);
             res.send({data: response});
+        } catch (error) {
+            console.log(error);
+        }
+    });
+
+    router.get('/history', async (req, res) => {
+        try {
+            const { userId } = req.query;
+            const history = await History.find({ 
+                userId,
+            });
+
+            res.send({history});
+        } catch (error) {
+            res.status(500).json({ error: error });
+        }
+    });
+
+    router.get('/history/:id', async(req, res) => {
+        try {
+            const history = await History.findOne({ pdfId: req.params.id})
+            res.send({history});
+        } catch (error) {
+            console.log(error);
+        }
+    })
+
+    router.delete('/history/:id', async(req, res) => {
+        try {
+            const file = await files_collection.findOne({ _id: req.params.id});
+            const history = await History.findOneAndDelete({ pdfId: req.params.id});
+
+            await files_collection.deleteOne({ _id: file._id });
+            await chunks_collection.deleteMany({ files_id: file._id });
+            
         } catch (error) {
             console.log(error);
         }
@@ -140,53 +215,72 @@ async function extractPDFText(buffer) {
 }
 
 // Generate Summary
-async function generateSummary(text, req, state) {
+async function generateSummary(text, pdfId) {
     try {
-        if (!req.session.chatHistory) {
-            req.session.chatHistory = [];
-            const systemMessage = {
-                role: "system",
-                content: state === 0 
-                    ? process.env.SUMMARY_PROMPT 
-                    : process.env.HELP_PROMPT
-            };
-            req.session.chatHistory.push(systemMessage);
-        }
+        let history = await History.findOne({ pdfId });
 
-        const messages = [...req.session.chatHistory];
+        const systemMessage = {
+            role: "system",
+            content:"[PROMPT] " + process.env.SUMMARY_PROMPT
+        };
 
-        if (state === 1 && text.selected) {
-            messages.push({
-                role: "user",
-                content: `[SELECTED TEXT CONTEXT]: ${text.selected}`
-            });
-        }
 
-        messages.push({
-            role: "user",
-            content: text.prompt
-        });
+        history.messages.push(systemMessage);
+
+        history.messages.push({role: 'user', content: text});
 
         const completion = await openai.chat.completions.create({
             model: "google/gemini-2.0-flash-lite-preview-02-05:free",
-            messages,
+            messages: history.messages,
         });
 
         const aiResponse = completion.choices[0].message.content;
         
-        req.session.chatHistory.push(
-            { role: "user", content: text.prompt },
-            { role: "assistant", content: aiResponse }
-        );
-        
-        await req.session.save();
+        history.messages.push({ role: "assistant", content: aiResponse });
+        await history.save();
 
         return aiResponse;
     } catch (error) {
-        console.error(error);
         throw error;
     }
 }
+
+async function generateChat(text, pdfId){
+    try {
+        let history = await History.findOne({ pdfId: pdfId});
+
+        if(history && history.messages.length <= 3){
+            const systemMessage = {
+                role: "system",
+                content:"[PROMPT] " + process.env.HELP_PROMPT
+            };
+            history.messages.push(systemMessage);
+        }
+
+
+        if (text.selected) {            
+            history.messages.push({
+                role: "user",
+                content: `[SELECTED TEXT CONTEXT] : ${text.selected}`
+            });
+        }
+    
+        history.messages.push({ role: "user", content: text.prompt });
+    
+        const completion = await openai.chat.completions.create({
+            model: "google/gemini-2.0-flash-lite-preview-02-05:free",
+            messages: history.messages,
+        });
+        const aiResponse = completion.choices[0].message.content;
+        history.messages.push({ role: "assistant", content: aiResponse });
+        await history.save();
+
+        return aiResponse
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 async function uploadToCloudinary(file){
     return new Promise((resolve, reject) => {
@@ -203,4 +297,15 @@ async function uploadToCloudinary(file){
         );
         streamifier.createReadStream(file.buffer).pipe(stream);
     });
+}
+
+
+function FormatFileSize(bytes) {
+    if (bytes >= 1024 * 1024) {
+        return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    } else if (bytes >= 1024) {
+        return (bytes / 1024).toFixed(2) + ' KB';
+    } else {
+        return bytes + ' bytes';
+    }
 }

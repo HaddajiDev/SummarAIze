@@ -1,4 +1,3 @@
-// Updated quiz.jsx
 import "./style.scss";
 import { MdOutlineQuiz } from "react-icons/md";
 import { Button, Radio, Spin, Modal } from 'antd';

@@ -15,6 +15,7 @@ export default function ChatBot() {
     const chats = usePDFStore(state => state.chat);
     const selectedText = usePDFStore(state => state.selectedText);
     const setSelectedText = usePDFStore(state => state.setSelectedText);
+    const pdfId = usePDFStore(state => state.pdfId);
     const chatRef = useRef(null);
     const [message, setMessage] = useState("");
     const { sendChat, AddChat, replayLoading } = usePDFStore();
@@ -40,7 +41,7 @@ export default function ChatBot() {
         setSelectedText(null);
         
         try {
-            const botResponse = await sendChat({ selected: currentSelectedText, prompt: message });
+            const botResponse = await sendChat({ selected: currentSelectedText, prompt: message }, pdfId);
             AddChat({ sender: "bot", content: botResponse });
         } catch (error) {
             console.error("Failed to send message:", error);
@@ -51,7 +52,7 @@ export default function ChatBot() {
         <div id="chatbot">
             <h1><BsRobot /> ChatBot</h1>
             <div className="chatContent" ref={chatRef}>
-                {chats.map((chat, i) => (
+                {chats?.map((chat, i) => (
                     <div key={i}>
                         {chat.sender === "bot" ? (
                             <div className="bot">
@@ -84,7 +85,7 @@ export default function ChatBot() {
                     </div>
                     
                 )}
-                {chats.length === 0 && (
+                {chats?.length === 0 && (
                     <img className="botCov" src={Bot} />
                 )}
             </div>
