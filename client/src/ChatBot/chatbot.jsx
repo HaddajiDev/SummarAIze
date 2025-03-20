@@ -16,6 +16,7 @@ export default function ChatBot() {
     const selectedText = usePDFStore(state => state.selectedText);
     const setSelectedText = usePDFStore(state => state.setSelectedText);
     const pdfId = usePDFStore(state => state.pdfId);
+    const selectedTextDB = usePDFStore(state => state.selectedTextDB);
     const chatRef = useRef(null);
     const [message, setMessage] = useState("");
     const { sendChat, AddChat, replayLoading } = usePDFStore();
@@ -25,6 +26,7 @@ export default function ChatBot() {
             top: chatRef.current.scrollHeight,
             behavior: "smooth"
         });
+        console.log(chats);
     },[message,chats]);
 
     const handleSend = async () => {
@@ -42,7 +44,7 @@ export default function ChatBot() {
         
         try {
             const botResponse = await sendChat({ selected: currentSelectedText, prompt: message }, pdfId);
-            AddChat({ sender: "bot", content: botResponse });
+            AddChat({ role: "assistant", content: botResponse });
         } catch (error) {
             console.error("Failed to send message:", error);
         }
@@ -50,27 +52,32 @@ export default function ChatBot() {
 
     return (
         <div id="chatbot">
-            <h1><BsRobot /> ChatBot</h1>
+            <h1 className="title"><BsRobot /> ChatBot</h1>
             <div className="chatContent" ref={chatRef}>
-                {chats?.map((chat, i) => (
-                    <div key={i}>
-                        {chat.sender === "bot" ? (
-                            <div className="bot">
-                                <span className="icon"><BsRobot /></span>
-                                <div className="cont"><ReactMarkdown>{chat.content}</ReactMarkdown></div>
-                            </div>
-                        ) : (
-                            <div className="user">
-                                <div className="cont">
-                                    {chat.selectedText && (
-                                        <p><IoArrowRedoSharp /> {chat.selectedText}</p>
-                                    )}
-                                    {chat.content}
+                {chats?.map((chat, i) => {
+                    if(i>2 && chat.role != "system" && !chat.content.includes("[SELECTED TEXT CONTEXT] : ")) return (
+                        <div key={i}>
+                            {chat.role === "assistant" ? (
+                                <div className="bot">
+                                    <span className="icon"><BsRobot /></span>
+                                    <div className="cont"><ReactMarkdown>{chat.content}</ReactMarkdown></div>
                                 </div>
-                            </div>
-                        )}
-                    </div>
-                ))}
+                            ) : (
+                                <div className="user">
+                                    <div className="cont">
+                                        {chat.selectedText && (
+                                            <p><IoArrowRedoSharp /> {chat.selectedText}</p>
+                                        )}
+                                        {(selectedTextDB.get(i-1)!=null) && (
+                                            <p><IoArrowRedoSharp /> {selectedTextDB.get(i-1)}</p>
+                                        )}
+                                        {chat.content}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )
+                })}
                 {replayLoading && (
                     <div className="bot">
                         <span className="icon"><BsRobot /></span>
@@ -85,7 +92,7 @@ export default function ChatBot() {
                     </div>
                     
                 )}
-                {chats?.length === 0 && (
+                {chats?.length === 3 && (
                     <img className="botCov" src={Bot} />
                 )}
             </div>

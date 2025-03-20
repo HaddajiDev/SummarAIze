@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import "./style.scss"
 import WebViewer from '@pdftron/webviewer';
 import usePDFStore from "../store/PDFStore";
 import { BsRobot } from "react-icons/bs";
 
 
-export default function PDFView() {
+const PDFView = () => {
     const viewerRef = useRef(null);
     const pdfUrl = usePDFStore((state)=>state.pdfUrl);
     const instanceRef = useRef(null);
@@ -125,3 +125,5 @@ export default function PDFView() {
         </div>
     )
 }
+
+export default memo(PDFView);

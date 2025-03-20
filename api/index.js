@@ -33,19 +33,19 @@ app.use("/auth", require("./routes/Auth"));
 
 (async () => {
   try {
-      await connect.connectMongoose();
-      const db = await connect.connectClient();
-      const bucket = new GridFSBucket(db, {
-        bucketName: 'uploads'
-      });
+    await connect.connectMongoose();
+    const db = await connect.connectClient();
+    const bucket = new GridFSBucket(db, {
+      bucketName: 'uploads'
+    });
 
-      app.use('/api', ChatRoutes(db, bucket));      
+    app.use('/api', ChatRoutes(db, bucket));      
 
-      app.get("/", (req, res) => res.send("Working"));
+    app.get("/", (req, res) => res.send("Working"));
 
-      app.listen(PORT, () => {
-          console.log(`server running on ${PORT}`);
-      });
+    app.listen(PORT, () => {
+        console.log(`server running on ${PORT}`);
+    });
   } catch (error) {
       console.error('Error connecting to db:', error);
   }

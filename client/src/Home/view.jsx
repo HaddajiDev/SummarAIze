@@ -9,13 +9,22 @@ import { LuTextSearch } from "react-icons/lu";
 import Resources from "../Resources/resources";
 import Summarize from "../Summarize/Summarize";
 import Quiz from "../Quiz/quiz";
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import Nav from "../Nav/nav";
+import usePDFStore from "../store/PDFStore";
+import { useNavigate } from "react-router-dom";
 
 
 
 export default function View() {
+    const navigate = useNavigate();
     const [option, setOption] = useState("chatbot");
+    const pdfUrl = usePDFStore(state => state.pdfUrl);
+    useLayoutEffect(() => {
+        if(!pdfUrl) {
+            navigate("/");
+        }
+    }, [pdfUrl, navigate]);
     return(
         <>
             <Nav />
@@ -26,10 +35,10 @@ export default function View() {
                     </Splitter.Panel>
                     <Splitter.Panel defaultSize="40%" min="40%" max="70%">
                         <div className="r-p">
-                            {option=="chatbot"&&<ChatBot />}
-                            {option=="resources"&&<Resources />}
-                            {option=="summarize"&&<Summarize />}
-                            {option=="quiz"&&<Quiz />}
+                            {option=="chatbot"&& <ChatBot />}
+                            {option=="resources"&& <Resources />}
+                            {option=="summarize"&& <Summarize />}
+                            {option=="quiz"&& <Quiz />}
                         </div>
                         <div className="menu">
                             <div className="items">

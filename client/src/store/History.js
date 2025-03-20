@@ -1,7 +1,6 @@
 import {create} from "zustand";
 import instanceAxios from "../lib/axios";
 import { message } from 'antd';
-import { redirect } from "react-router-dom";
 
 const useHistoryStore = create((set,get)=>({
     history: null,
@@ -12,15 +11,16 @@ const useHistoryStore = create((set,get)=>({
             set({history: result.data.history});
             console.log(result.data.history);
         } catch (error) {
-            console.log(error);
+            console.log("get history error", error);
         }
     },
 
-    deleteHistory: async() => {
+    deleteHistory: async(pdfId) => {
         try {            
-            const result = await instanceAxios.delete(`/api/history/${pdfId}`);        
+            await instanceAxios.delete(`/api/history/${pdfId}`);
+            message.success("PDF deleted successfully");
         } catch (error) {
-            
+            console.log("delete pdf error", error);
         }
     }
 }))

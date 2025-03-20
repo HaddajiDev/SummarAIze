@@ -78,6 +78,7 @@ module.exports = (db, bucket) => {
                 pdfId,
                 summary: "",
                 pdfLink: cloudinaryRes.secure_url,
+                pdfCloudId: cloudinaryRes.public_id,
                 messages: [],
                 quizs: [],
                 pdfName: uploadStream.filename,
@@ -87,18 +88,19 @@ module.exports = (db, bucket) => {
             await newHistory.save();
             
             const summary = await generateSummary(text, pdfId);
+
+            // History.updateOne(
+            //     { pdfId: pdfId },
+            //     { summary: summary }
+            // );
             
-            await History.updateOne(
-                { pdfId: pdfId },
-                { 
-                    summary: summary
-                }
-            );
+            const his = await History.findOneAndUpdate({ pdfId: pdfId }, { summary: summary });
 
             res.status(200).json({
                 summary,
                 url: cloudinaryRes.secure_url,
-                pdfId
+                pdfId,
+                chat: his.messages
             });
 
         } catch (error) {
@@ -111,7 +113,7 @@ module.exports = (db, bucket) => {
     });
 
     router.post('/chat', async(req, res) => {
-        const { prompt, pdfId } = req.body;        
+        const { prompt, pdfId } = req.body;   
         try {
             const response = await generateChat(prompt, pdfId);
             res.send({data: response});
@@ -144,12 +146,21 @@ module.exports = (db, bucket) => {
 
     router.delete('/history/:id', async(req, res) => {
         try {
-            const file = await files_collection.findOne({ _id: req.params.id});
-            const history = await History.findOneAndDelete({ pdfId: req.params.id});
+            const history = await History.findOne({ pdfId: req.params.id});
+            if(!history){
+                return res.status(404).json({ error: "History not found"});
+            }
+            await cloudinary.uploader.destroy(history.pdfCloudId);
+            await History.deleteOne({ pdfId: req.params.id});
 
-            await files_collection.deleteOne({ _id: file._id });
-            await chunks_collection.deleteMany({ files_id: file._id });
-            
+            const objectId = new ObjectId(req.params.id);
+            const file = await files_collection.findOne({ _id: objectId });
+            if (!file) {
+                return res.status(404).json({ error: "File not found" });
+            }
+            await files_collection.deleteOne({ _id: objectId });
+            await chunks_collection.deleteMany({ files_id: objectId });
+            return res.status(200).json({ message: "History deleted" });
         } catch (error) {
             console.log(error);
         }
@@ -248,7 +259,6 @@ async function generateSummary(text, pdfId) {
 async function generateChat(text, pdfId){
     try {
         let history = await History.findOne({ pdfId: pdfId});
-
         if(history && history.messages.length <= 3){
             const systemMessage = {
                 role: "system",

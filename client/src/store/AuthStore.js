@@ -2,6 +2,8 @@ import {create} from "zustand";
 import instanceAxios from "../lib/axios";
 import { message } from 'antd';
 import { redirect } from "react-router-dom";
+import useHistoryStore from "./History";
+import usePDFStore from "./PDFStore";
 
 const useAuthStore = create((set,get)=>({
     user: null,
@@ -27,6 +29,8 @@ const useAuthStore = create((set,get)=>({
         try {
             const res = await instanceAxios.post('/auth/login', { ...data });
             set({ user: res.data.user });
+            const getHiss = useHistoryStore.getState().getHistory; 
+            getHiss(res.data.user.id);
             redirect("/view");
             message.success("Login successful");
         } catch (err) {
@@ -40,6 +44,8 @@ const useAuthStore = create((set,get)=>({
         try {
             await instanceAxios.post('/auth/logout');
             set({ user: null });
+            const clear = usePDFStore.getState().clear;
+            clear();
             message.success("Logout successful");
         } catch (err) {
             console.log("logout error", err);
@@ -50,6 +56,7 @@ const useAuthStore = create((set,get)=>({
         try {
             const res = await instanceAxios.get('/auth/user');
             set({ user: res.data.user });
+            console.log(res.data.user);
         } catch (err) {
             console.log("getUser error", err);
         }

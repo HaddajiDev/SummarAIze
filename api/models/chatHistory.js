@@ -4,6 +4,7 @@ const historySchema = new mongoose.Schema({
     userId: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
     pdfId: {type: mongoose.Schema.Types.ObjectId},
     pdfLink: {type: String},
+    pdfCloudId: {type: String},
     pdfName: {type: String},
     pdfSize: {type: String},
     messages: [{

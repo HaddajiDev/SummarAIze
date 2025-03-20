@@ -1,7 +1,7 @@
 import { Navigate, redirect, Route, Routes } from "react-router-dom"
 import Home from "./Home/home"
 import Landing from "./Landing/landing"
-import usePDFStore from "./store/PDFStore"
+// import usePDFStore from "./store/PDFStore"
 import Nav from "./Nav/nav";
 import ForgotPassword from "./Auth/forgotPassword";
 import { useEffect } from "react";

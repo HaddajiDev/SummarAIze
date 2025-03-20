@@ -19,6 +19,7 @@
     "@tailwindcss/typography": "^0.5.16",
     "axios": "^1.8.3",
     "cloudinary": "^2.6.0",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.5.0",
     "github-markdown-css": "^5.8.1",
     "pdfjs-dist": "^4.10.38",

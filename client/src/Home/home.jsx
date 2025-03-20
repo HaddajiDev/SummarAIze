@@ -10,9 +10,11 @@ import { AiOutlineFilePdf } from "react-icons/ai";
 import { TbFileShredder } from "react-icons/tb";
 import { TbFileReport } from "react-icons/tb";
 import useHistoryStore from "../store/History";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useAuthStore from "../store/AuthStore";
+import { formatDistance } from 'date-fns';
 
+import SvgLogo from "../assets/PDF_file_icon.png";
 
 
 // Dropzone.options.recommendationDiv = {
@@ -21,19 +23,22 @@ import useAuthStore from "../store/AuthStore";
 
 export default function Home() {
     const user = useAuthStore(state=>state.user);
-    const navigate = useNavigate();
     const {uploadLoading,uploadPDF, getOneHistory} = usePDFStore();
-    const { getHistory } = useHistoryStore();
     const history = useHistoryStore(state => state.history);
+    const getHistory = useHistoryStore(state=>state.getHistory);
+    const deleteHistory = useHistoryStore(state=>state.deleteHistory);
+    const checkAuth = useHistoryStore(state=>state.checkAuth);
+    const navigate = useNavigate();
+    const [showError, setShowError] = useState(false);
 
     const handleFileChange = async (file) => {
-        // const file = event.target.files[0];
-        if(file && file.size > 2000000){
-            message.error("File size is too large. Please upload a file less than 2MB")
-            return;
-        }
+        setShowError(false);
         if (file && file.type === "application/pdf") {
-            await uploadPDF(file, user._id);
+            if(file.size > 2000000 && user.plan === "free") {
+                setShowError(true);
+                return;
+            }
+            await uploadPDF(file, user.id);
             navigate('/view');
         } else {
             message.error("Please upload a valid PDF file")
@@ -41,12 +46,17 @@ export default function Home() {
     };
 
     useEffect(() => {
-        getHistory(user._id);
-    }, []);
+        getHistory(user.id);
+    }, [user.id, getHistory]);
 
     const handleView = async(pdfId) => {
         await getOneHistory(pdfId);
         navigate('/view');
+    }
+
+    const handleDeletePDF = async(pdfId) => {
+        await deleteHistory(pdfId);
+        getHistory(user.id);
     }
 
     return (
@@ -85,17 +95,24 @@ export default function Home() {
                             </div>
                         )}
                     </Dropzone>
+                    {showError && (
+                        <div className="upload-error">
+                            <p className="error">File size exceeds 2MB limit for free plan. Please upgrade to premium plan</p>
+                            <Button color="primary" variant="dashed">Upgrade now</Button>
+                        </div>
+                    )}
                 </div>
                 <div className="hist">
                     <h3>Recent Uploads</h3>
                     <div className="items">
-                        {history && history.length !== 0 ? history.map(item => (
-                            <div className="item">                                                       
-                                <p><AiOutlineFilePdf /> {item.pdfName}</p>
-                                <p><TbFileShredder /> {item.pdfSize}</p>
-                                <p><TbFileReport /> {new Date(item.createdAt).getFullYear() + "/" + new Date(item.createdAt).getMonth() + "/" + new Date(item.createdAt).getDay()}</p>
+                        {history && history.length !== 0 ? history.map((item,idx) => (
+                            <div className="item" key={idx}>
+                                <img src={SvgLogo} />                                                    
+                                <p><AiOutlineFilePdf /> {item?.pdfName}</p>
+                                <p><TbFileShredder /> {item?.pdfSize}</p>
+                                <p><TbFileReport /> {formatDistance(new Date(item?.createdAt), new Date(), { addSuffix: true }).replace("about ", "")}</p>
                                 <div className="opt">
-                                    <Button color="primary" variant="dashed" onClick={() => handleView(item.pdfId)}>View</Button>
+                                    <Button color="primary" variant="dashed" onClick={() => handleView(item?.pdfId)}>View</Button>
                                     <Popconfirm
                                         title="Delete the PDF"
                                         description="Are you sure to delete this PDF?"
@@ -104,17 +121,18 @@ export default function Home() {
                                         okText="Yes"
                                         cancelText="No"
                                     >
-                                        <Button color="danger" variant="dashed">Delete</Button>
+                                        <Button color="danger" variant="dashed" onClick={()=>handleDeletePDF(item?.pdfId)}>Delete</Button>
                                     </Popconfirm>
                                 </div>
                             </div>
                         )) : 
-                        
-                            <Empty description={
-                            <Typography.Text>
-                                No recent uploads
-                            </Typography.Text>
-                            } />
+                            <Empty 
+                                description={
+                                    <Typography.Text>
+                                        No recent uploads
+                                    </Typography.Text>
+                                }
+                            />
                         }
                     </div>
                     
