@@ -4,10 +4,12 @@ const router = express.Router();
 const { openai } = require('../lib/ai');
 const axios = require('axios');
 const { JSDOM } = require('jsdom');
+const History = require('../models/chatHistory');
+
 
 router.post('/', async (req, res) => {
   try {
-    const { text } = req.body;
+    const { text, pdfId } = req.body;
     const messages=[];
     messages.push({ role: 'user', content:`give me keywords about this summary \n${text}` })
     if (!text) {
@@ -42,6 +44,17 @@ router.post('/', async (req, res) => {
 
     const resourcesJson = response.choices[0].message.content;
     const resourcesData = JSON.parse(resourcesJson);
+
+    const newResources = resourcesData.map(resource => ({
+      type: resource.type,
+      title: resource.title,
+      link: resource.link
+    }));
+    
+    await History.updateOne(
+      { pdfId },
+      { $set: { resources: newResources } }
+    );
 
     return res.status(200).json(resourcesData);
   } catch (error) {

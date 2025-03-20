@@ -12,25 +12,28 @@ const usePDFStore = create((set,get)=>({
     quizes: [],
     quizesLoading: false,
     selectedText: null,
+    pdfId: null,
 
     setPDFURL: (url) => set({pdfUrl:url}),
 
     clearPDF: () => set({pdfUrl:null}),
 
-    uploadPDF: async (file) => {
+    uploadPDF: async (file, userId) => {
         set({uploadLoading:true});
         // console.log(file);
         try {
             const formData = new FormData();
             formData.append('file', file);
-            const res = await instanceAxios.post('/api/upload', formData, {
+            const res = await instanceAxios.post(`/api/upload?userId=${userId}`, formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
             // console.log(res.data);
             set({pdfUrl: res.data.url});
             set({summary: res.data.summary});
-            get().fetchresource();
-            get().handleFetchQuizes();
+            set({pdfId: res.data.pdfId});
+            set({chat: null});
+            get().fetchresource(res.data.pdfId);
+            get().handleFetchQuizes(res.data.pdfId);
             // console.log(get().summary);
         } catch (error) {
             console.error('Upload error:', error);
@@ -43,10 +46,10 @@ const usePDFStore = create((set,get)=>({
         set({selectedText:text});
     },
 
-    sendChat: async(prompt) => {
+    sendChat: async(prompt, pdfId) => {
         set({ replayLoading: true });
         try {
-            const result = await instanceAxios.post('/api/chat', { prompt });
+            const result = await instanceAxios.post('/api/chat', { prompt, pdfId });
             return result.data.data;
         } catch (error) {
             console.error(error);
@@ -59,11 +62,11 @@ const usePDFStore = create((set,get)=>({
         set({ chat: [...get().chat, message]});
     },
     
-    fetchresource: async () => {
+    fetchresource: async (pdfId) => {
         set({resourcesLoading:true});
         try {
             const summary = get().summary;
-            const result = await instanceAxios.post('/resources', { text: summary });
+            const result = await instanceAxios.post('/resources', { text: summary, pdfId });
             // const results = await Promise.all(result.data.map(async (res) => {
             //     const img = await instanceAxios.get(`/resources/metadata?url=${encodeURIComponent(res.link)}`);
             //     res.cover = img.data;
@@ -80,16 +83,30 @@ const usePDFStore = create((set,get)=>({
         }
     },
     
-    handleFetchQuizes: async () => {
+    handleFetchQuizes: async (pdfId) => {
         set({quizesLoading:true});
         try {
-            const response = await instanceAxios.post('/quiz', { text: get().summary });
+            const response = await instanceAxios.post('/quiz', { text: get().summary, pdfId });
             set({quizes:response.data});
-            console.log(response.data);
         } catch (err) {
             console.error(err);
         } finally {
             set({quizesLoading:false});
+        }
+    },
+
+    getOneHistory: async(pdfId) => {
+        try {
+            const result = await instanceAxios.get(`/api/history/${pdfId}`);
+            console.log(result.data);
+            set({pdfUrl: result.data.history.pdfLink});
+            set({summary: result.data.history.summary});
+            set({chat: result.data.history.messages.slice(2)});
+            set({quizes: result.data.history.quizs});
+            set({resources: result.data.history.resources});
+            set({pdfId: result.data.history.pdfId})
+        } catch (error) {
+            console.log(error);
         }
     }
 }));
