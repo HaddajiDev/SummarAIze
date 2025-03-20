@@ -26,7 +26,7 @@ export default function ChatBot() {
             top: chatRef.current.scrollHeight,
             behavior: "smooth"
         });
-        console.log(chats);
+        // console.log(chats);
     },[message,chats]);
 
     const handleSend = async () => {

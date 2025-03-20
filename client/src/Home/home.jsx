@@ -53,11 +53,13 @@ export default function Home() {
     }, [user.id, getHistory]);
 
     const handleView = async(pdfId) => {
+        setShowError(null);
         await getOneHistory(pdfId);
         navigate('/view');
     }
 
     const handleDeletePDF = async(pdfId) => {
+        setShowError(null);
         if(user?.plan === "free") {
             setShowError("You need to upgrade to premium plan to delete the PDF");
             return;
@@ -71,7 +73,11 @@ export default function Home() {
             <Nav />
             <div className="content">
                 <div className='upload'>
-                    <Dropzone onDrop={files => handleFileChange(files[0])} accept={['.pdf']} disabled={uploadLoading}>
+                    <Dropzone 
+                        onDrop={files => handleFileChange(files[0])}  
+                        accept={{ 'application/pdf': ['.pdf'] }} 
+                        disabled={uploadLoading}
+                    >
                         {({getRootProps, getInputProps}) => (
                             <div className="container-upload">
                                 <div
@@ -123,12 +129,12 @@ export default function Home() {
                                     <Popconfirm
                                         title="Delete the PDF"
                                         description="Are you sure to delete this PDF?"
-                                        onConfirm={()=>{}}
+                                        onConfirm={()=>handleDeletePDF(item?.pdfId)}
                                         onCancel={()=>{}}
                                         okText="Yes"
                                         cancelText="No"
                                     >
-                                        <Button color="danger" variant="dashed" onClick={()=>handleDeletePDF(item?.pdfId)}>Delete</Button>
+                                        <Button color="danger" variant="dashed">Delete</Button>
                                     </Popconfirm>
                                 </div>
                             </div>

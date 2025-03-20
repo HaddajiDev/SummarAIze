@@ -17,14 +17,9 @@ import { useNavigate } from "react-router-dom";
 
 
 export default function View() {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const [option, setOption] = useState("chatbot");
-    const pdfUrl = usePDFStore(state => state.pdfUrl);
-    useLayoutEffect(() => {
-        if(!pdfUrl) {
-            navigate("/");
-        }
-    }, [pdfUrl, navigate]);
+    // const pdfUrl = usePDFStore(state => state.pdfUrl);
     return(
         <>
             <Nav />

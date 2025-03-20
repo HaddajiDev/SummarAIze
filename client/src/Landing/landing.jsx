@@ -1,5 +1,5 @@
 import './style.scss'
-import { Button } from 'antd'
+import { Affix, Button } from 'antd'
 import Nav from '../Nav/nav';
 import Register from '../Auth/register';
 import Login from '../Auth/login';
@@ -13,31 +13,42 @@ import Feature2SVG from "../assets/ft2.svg"
 import Feature3SVG from "../assets/ft3.svg"
 import Feature4SVG from "../assets/ft4.svg"
 import Feature5SVG from "../assets/ft5.svg"
+import { set } from 'date-fns';
 
 export default function Landing() {
-
+    const [link, setLink] = useState("header");
     const [open, setOpen] = useState(null);
+
+    const handleScroll = (id) => {
+        const section = document.querySelector(id);
+        setLink(id.slice(1));
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
 
     return (
         <>
             <div className='landing container'>
-                <nav>
-                    <div className="l-s">
-                        <h1>Summar<span>AI</span>ze</h1>
-                    </div>
-                    <div className="c-s">
-                        <a className='active'>Home</a>
-                        <a>Features</a>
-                        <a>Pricing</a>
-                        <a>FAQs</a>
-                        <a>Contact Us</a>
-                    </div>
-                    <div className="r-s">
-                        <Button onClick={() => setOpen("login")}>Sign In</Button>
-                        <Button onClick={() => setOpen("register")} type="primary">Sign Up</Button>
-                    </div>
-                </nav>
-                <header>
+                <Affix style={{ zIndex: 1000, width: "100%", position: "positive" }}>
+                    <nav>
+                        <div className="l-s">
+                            <h1>Summar<span>AI</span>ze</h1>
+                        </div>
+                        <div className="c-s">
+                            <a className={link=="header" ?"active" :""} onClick={()=>handleScroll("#header")}>Home</a>
+                            <a className={link=="features" ?"active" :""} onClick={()=>handleScroll("#features")}>Features</a>
+                            <a className={link=="pricing" ?"active" :""} onClick={()=>handleScroll("#pricing")}>Pricing</a>
+                            {/* <a>FAQs</a> */}
+                            <a>Contact Us</a>
+                        </div>
+                        <div className="r-s">
+                            <Button onClick={() => setOpen("login")}>Sign In</Button>
+                            <Button onClick={() => setOpen("register")} type="primary">Sign Up</Button>
+                        </div>
+                    </nav>
+                </Affix>
+                <header id='header'>
                     <div className="l-s">
                         <h1>Revolutionize Your PDF Workflow with Summar<span>AI</span>ze</h1>
                         <p>🚀 Experience the future of document interaction today!</p>
@@ -59,7 +70,7 @@ export default function Landing() {
                         <Button onClick={() => setOpen("register")} type="primary">Discover More</Button>
                     </div>
                 </div>
-                <div className='feature'>
+                <div className='feature' id='features'>
                     <h2>
                         Struggling with lengthy PDFs?
                         <br />
@@ -103,7 +114,7 @@ export default function Landing() {
                         </div>
                     </div>
                 </div>
-                <div className='pricing'>
+                <div className='pricing' id='pricing'>
                     <div className='tit'>
                         <h2>
                             Transparent & Affordable Pricing
