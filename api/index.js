@@ -1,6 +1,6 @@
 require('dotenv').config()
 const express = require('express');
-const session = require('express-session');
+// const session = require('express-session');
 const cors = require('cors');
 const { GridFSBucket } = require('mongodb');
 const cookieParser = require('cookie-parser');
@@ -29,11 +29,11 @@ app.use((req, res, next) => {
   next();
 });
 app.use(cookieParser());
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true
-}));
+// app.use(session({
+//   secret: process.env.SESSION_SECRET,
+//   resave: false,
+//   saveUninitialized: true
+// }));
 
 
 const ChatRoutes = require("./routes/upload");
