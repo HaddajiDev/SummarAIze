@@ -13,10 +13,10 @@ const PORT = process.env.PORT;
 const app = express();
 
 app.use(cors({
-  // origin: ["http://localhost:5173", "https://summar-ai-ze.vercel.app"],
-  origin: "*",
+  origin: ["http://localhost:5173", "https://summar-ai-ze.vercel.app"],
   credentials: true
 }));
+app.options("*", cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(session({
