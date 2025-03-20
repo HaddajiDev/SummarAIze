@@ -27,91 +27,91 @@ export default function Landing() {
                     </div>
                     <div className="c-s">
                         <a className='active'>Home</a>
-                        <a>Feature</a>
+                        <a>Features</a>
                         <a>Pricing</a>
-                        <a>Questions</a>
-                        <a>Contact us</a>
+                        <a>FAQs</a>
+                        <a>Contact Us</a>
                     </div>
                     <div className="r-s">
-                        <Button onClick={()=>setOpen("login")}>Sign In</Button>
-                        <Button onClick={()=>setOpen("register")} type="primary">Sign up</Button>
+                        <Button onClick={() => setOpen("login")}>Sign In</Button>
+                        <Button onClick={() => setOpen("register")} type="primary">Sign Up</Button>
                     </div>
                 </nav>
                 <header>
                     <div className="l-s">
-                        <h1>Unlock the Power of Your PDFs with Summar<span>AI</span>ze</h1>
-                        <p>🚀 Transform the way you interact with PDFs today!</p>
-                        <Button onClick={()=>setOpen("register")} type="primary">Get Started</Button>
+                        <h1>Revolutionize Your PDF Workflow with Summar<span>AI</span>ze</h1>
+                        <p>🚀 Experience the future of document interaction today!</p>
+                        <Button onClick={() => setOpen("register")} type="primary">Get Started Now</Button>
                     </div>
                     <div className="r-s">
-                        <img src={HeaderSVG} />
+                        <img src={HeaderSVG} alt="Header Illustration" />
                     </div>
                 </header>
                 <div className='intro'>
                     <div className='pf'>
-                        <img src={FeatureSVG} />
+                        <img src={FeatureSVG} alt="Features Overview" />
                     </div>
                     <div className='content'>
-                        <h3>Enhance Your PDF Experience with AI</h3>
-                            <p>Stop wasting time manually reading and summarizing PDFs.</p>
-                            <p>With Summar<span>AI</span>ze, you can chat with your documents, generate instant summaries, create quizzes, and discover relevant resources—all with AI-powered assistance.</p>
-                            <p>Whether you're a student, researcher, or professional, our platform helps you boost productivity and  streamline your workflow.</p>
-                        <Button onClick={()=>setOpen("register")}  type="primary">Explore Now</Button>
+                        <h3>Supercharge Your PDF Experience with AI</h3>
+                        <p>Say goodbye to tedious manual reading and summarization.</p>
+                        <p>With Summar<span>AI</span>ze, you can interact with your documents, generate instant summaries, create quizzes, and uncover valuable insights—all powered by cutting-edge AI.</p>
+                        <p>Whether you're a student, researcher, or professional, our platform is designed to enhance productivity and simplify your workflow.</p>
+                        <Button onClick={() => setOpen("register")} type="primary">Discover More</Button>
                     </div>
                 </div>
                 <div className='feature'>
                     <h2>
-                        Tired of scrolling through long PDFs?
+                        Struggling with lengthy PDFs?
                         <br />
-                        With Summar<span>AI</span>ze you can
+                        Summar<span>AI</span>ze has you covered!
                     </h2>
                     <div className='fts'>
                         <div className='item'>
                             <div className='icon'>
-                                <img src={Feature1SVG} />
+                                <img src={Feature1SVG} alt="Chat with PDFs" />
                             </div>
                             <h3>Chat with Your PDFs</h3>
-                            <p>Ask questions and get instant answers.</p>
+                            <p>Ask questions and receive instant, accurate answers.</p>
                         </div>
                         <div className='item'>
                             <div className='icon'>
-                                <img src={Feature2SVG} />
+                                <img src={Feature2SVG} alt="Generate Summaries" />
                             </div>
                             <h3>Generate Summaries</h3>
-                            <p>Get concise takeaways in seconds.</p>
+                            <p>Extract key points in seconds.</p>
                         </div>
                         <div className='item'>
                             <div className='icon'>
-                                <img src={Feature3SVG} />
+                                <img src={Feature3SVG} alt="Create Quizzes" />
                             </div>
                             <h3>Create Quizzes</h3>
-                            <p>Test your understanding with AI-generated quizzes.</p>
+                            <p>Test your knowledge with AI-crafted quizzes.</p>
                         </div>
                         <div className='item'>
                             <div className='icon'>
-                                <img src={Feature4SVG} />
+                                <img src={Feature4SVG} alt="Discover Resources" />
                             </div>
                             <h3>Discover Resources</h3>
-                            <p>Get topic-related links and references.</p>
+                            <p>Access topic-related links and references effortlessly.</p>
                         </div>
                         <div className='item'>
                             <div className='icon'>
-                                <img src={Feature5SVG} />
+                                <img src={Feature5SVG} alt="Edit & Enhance" />
                             </div>
                             <h3>Edit & Enhance</h3>
-                            <p>Annotate, highlight, and modify your PDFs effortlessly.</p>
+                            <p>Annotate, highlight, and modify your PDFs with ease.</p>
                         </div>
                     </div>
                 </div>
                 <div className='pricing'>
                     <div className='tit'>
                         <h2>
-                            Simple & Affordable Pricing
+                            Transparent & Affordable Pricing
                         </h2>
                         <p>
-                            Get started for free or unlock premium features at a low price.
+                            Start for free or unlock premium features at a competitive price.
                             <br />
-                            No hidden fees—just powerful tools to enhance your PDF experience.
+                            No hidden costs—just powerful tools to elevate your PDF experience.
                         </p>
                     </div>
                     <div className='ps'>
@@ -119,36 +119,37 @@ export default function Landing() {
                             <h3>Basic Plan</h3>
                             <p>Free</p>
                             <ul>
-                                <li><FaCircleCheck /> Limited Upload (3 PDFs) </li>
-                                <li><FaCircleCheck /> Chat with PDFs </li>
-                                <li><FaCircleCheck /> AI-Powered Summarization (Basic)</li>
-                                <li><FaCircleCheck /> Generate Quizzes</li>
+                                <li><FaCircleCheck /> Upload up to 3 PDFs</li>
+                                <li><FaCircleCheck /> Chat with PDFs</li>
+                                <li><FaCircleCheck /> Basic AI Summarization</li>
+                                <li><FaCircleCheck /> Quiz Generation</li>
                                 <li><FaCircleCheck /> Extract Key Topics & Resources</li>
                                 <li><FaCircleCheck /> Limited Cloud Storage</li>
+                                <li><FaCircleCheck /> No PDF Deletion</li>
                             </ul>
-                            <Button onClick={()=>setOpen("register")} type="primary">Get Started</Button>
+                            <Button onClick={() => setOpen("register")} type="primary">Get Started</Button>
                         </div>
                         <div className='item'>
                             <h3>Premium Plan</h3>
                             <p>$10<span>/Month</span></p>
                             <ul>
                                 <li><FaCircleCheck /> Unlimited PDF Uploads</li>
-                                <li><FaCircleCheck /> Chat with PDFs </li>
-                                <li><FaCircleCheck /> Advanced Summarization</li>
-                                <li><FaCircleCheck /> Regenerate Summarization</li>
+                                <li><FaCircleCheck /> Chat with PDFs</li>
+                                <li><FaCircleCheck /> Advanced AI Summarization</li>
+                                <li><FaCircleCheck /> Regenerate Summaries</li>
                                 <li><FaCircleCheck /> Unlimited Quiz Generation</li>
                                 <li><FaCircleCheck /> Full PDF Editing (Merge, Split, Convert & More)</li>
-                                <li><FaCircleCheck /> Priority Processing (Faster AI Responses)</li>
-                                <li><FaCircleCheck /> No Ads & Priority Support</li>
+                                <li><FaCircleCheck /> Priority AI Processing</li>
+                                <li><FaCircleCheck /> Ad-Free Experience & Priority Support</li>
                             </ul>
-                            <Button onClick={()=>setOpen("register")} type="primary">Get Started</Button>
+                            <Button onClick={() => setOpen("register")} type="primary">Upgrade Now</Button>
                         </div>
                     </div>
                 </div>
                 <Login open={open} setOpen={setOpen} />
                 <Register open={open} setOpen={setOpen} />
             </div>
-            <footer>©{new Date().getFullYear()} Summar<span>AI</span>ze. All rights reserved</footer>
+            <footer>©{new Date().getFullYear()} Summar<span>AI</span>ze. All rights reserved.</footer>
         </>
     )
 }

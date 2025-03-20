@@ -99,7 +99,6 @@ const PDFView = () => {
                     // setSelectedText(null);
                 }
             });
-
         });
     }, [pdfUrl]);
 

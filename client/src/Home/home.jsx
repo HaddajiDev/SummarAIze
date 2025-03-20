@@ -58,8 +58,8 @@ export default function Home() {
     }
 
     const handleDeletePDF = async(pdfId) => {
-        if(user?.plan === "free" && user?.numberOfDocuments >= 3) {
-            setShowError("You have reached the limit of 3 documents for free plan. Please upgrade to premium plan");
+        if(user?.plan === "free") {
+            setShowError("You need to upgrade to premium plan to delete the PDF");
             return;
         }
         await deleteHistory(pdfId);
