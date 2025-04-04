@@ -210,7 +210,6 @@ module.exports = (db, bucket) => {
 
     return router;
 };
-
 // Validate PDF
 async function validatePDF(buffer) {
     try {
@@ -220,7 +219,6 @@ async function validatePDF(buffer) {
         return false;
     }
 }
-
 // Extract PDF Text
 async function extractPDFText(buffer) {
     try {
@@ -230,7 +228,6 @@ async function extractPDFText(buffer) {
         throw new Error(`PDF text extraction failed: ${error.message}`);
     }
 }
-
 // Generate Summary
 async function generateSummary(text, pdfId) {
     try {
@@ -247,11 +244,13 @@ async function generateSummary(text, pdfId) {
         history.messages.push({role: 'user', content: text});
 
         const completion = await openai.chat.completions.create({
-            model: "google/gemini-2.0-flash-lite-preview-02-05:free",
+            model: process.env.AI_MODEL,
             messages: history.messages,
         });
 
+        
         const aiResponse = completion.choices[0].message.content;
+        // console.log(aiResponse);
         
         history.messages.push({ role: "assistant", content: aiResponse });
         await history.save();
@@ -261,7 +260,6 @@ async function generateSummary(text, pdfId) {
         throw error;
     }
 }
-
 async function generateChat(text, pdfId){
     try {
         let history = await History.findOne({ pdfId: pdfId});
@@ -284,7 +282,7 @@ async function generateChat(text, pdfId){
         history.messages.push({ role: "user", content: text.prompt });
     
         const completion = await openai.chat.completions.create({
-            model: "google/gemini-2.0-flash-lite-preview-02-05:free",
+            model: process.env.AI_MODEL,
             messages: history.messages,
         });
         const aiResponse = completion.choices[0].message.content;
@@ -296,8 +294,6 @@ async function generateChat(text, pdfId){
         console.log(error);
     }
 }
-
-
 async function uploadToCloudinary(file){
     return new Promise((resolve, reject) => {
         let stream = cloudinary.uploader.upload_stream(
@@ -314,8 +310,6 @@ async function uploadToCloudinary(file){
         streamifier.createReadStream(file.buffer).pipe(stream);
     });
 }
-
-
 function FormatFileSize(bytes) {
     if (bytes >= 1024 * 1024) {
         return (bytes / (1024 * 1024)).toFixed(2) + ' MB';

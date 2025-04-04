@@ -2,11 +2,7 @@ const express = require("express");
 const OpenAI = require('openai');
 const router = express.Router();
 const History = require('../models/chatHistory');
-
-const openrouter = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPENROUTER_API_KEY,
-});
+const { openai } = require('../lib/ai');
 
 router.post('/', async (req, res) => {
   try {
@@ -31,17 +27,19 @@ router.post('/', async (req, res) => {
           "question": "question text",
           "options": ["option1", "option2", "option3", "option4"],
           "answer": correct_option_index
-        }]      
+        }]
     `;
 
-    const response = await openrouter.chat.completions.create({
-      model: "google/gemini-2.0-flash-lite-preview-02-05:free",
+    const response = await openai.chat.completions.create({
+      model: process.env.AI_MODEL,
       messages: [{role: 'system', content: system_prompt},{ role: 'user', content: prompt }],
       response_format: { type: "json_object" },      
     });
 
     const quizJson = response.choices[0].message.content;
-    const quizData = JSON.parse(quizJson);
+    const cleanedJson = quizJson.replace(/```json|```/g, '').trim();
+    const quizData = JSON.parse(cleanedJson);
+    // console.log(quizData);
 
     const newQuizData = quizData.map(quiz => ({
       question: quiz.question,

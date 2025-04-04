@@ -19,31 +19,31 @@ router.post('/', async (req, res) => {
     const prompt = `
       You are a resource generator AI that finds and provides **useful resources** related to the given summary.
       
-      Based on the summary provided, search for **high-quality** resources such as:
-      - **Articles** (Blogs, research papers, tutorials)
-      - **Books** (Online books, PDFs, eBooks)
-    
-      Ensure that you provide **at least 10 resources** across different types, but return more if available.
-    
-      The output should be **only** a JSON array, with each entry containing:
+      Output **only** a valid JSON array (no extra text). Each item should be:
       - **"type"**: ("article", "book")
       - **"title"**: (The title of the resource)
-      - **"link"**: (The direct URL to the resource)
+      - **"link"**: (A valid direct URL)
 
-      Please i prefer the resources are in the same language as the summary provided.
+      Example output:
+      [
+        { "type": "article", "title": "Intro to AI", "link": "https://example.com" },
+        { "type": "book", "title": "AI for Beginners", "link": "https://example.com" }
+      ]
 
-      **Do not** add any explanations or extra text—only return the JSON array.
+      Please ensure the resources are in the same language as the summary provided.
+      **Only return the JSON array**.
     `;
     messages.push({ role: 'system', content: prompt })
 
     const response = await openai.chat.completions.create({
-      model: "google/gemini-2.0-flash-lite-preview-02-05:free",
+      model: process.env.AI_MODEL,
       messages,
       response_format: { type: "json_object" }
     });
 
     const resourcesJson = response.choices[0].message.content;
-    const resourcesData = JSON.parse(resourcesJson);
+    const cleanedJson = resourcesJson.replace(/```json|```/g, '').trim();
+    const resourcesData = JSON.parse(cleanedJson);
 
     const newResources = resourcesData.map(resource => ({
       type: resource.type,
